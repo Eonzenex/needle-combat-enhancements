@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "id": "needle_ce",
+  "version": "${version}",
+
+  "name": "Needle Combat Enhancements",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "EonZeNx"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/needle_ce/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.eonzenx.needle_ce.NCE"
+    ],
+    "client": [
+      "net.eonzenx.needle_ce.client.NCEClientInitializer"
+    ],
+    "server": [
+      "net.eonzenx.needle_ce.server.NCEServerInitializer"
+    ],
+    "cardinal-components": [
+      "net.eonzenx.needle_ce.cardinal_components.CComponentHandler"
+    ]
+  },
+  "mixins": [
+    "needle_ce.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.11.3",
+    "fabric": "*",
+    "minecraft": "1.17.x",
+    "java": ">=16"
+  },
+  "suggests": {
+    "another-mod": "*"
+  },
+
+  "custom": {
+    "cardinal-components": [
+      "needle_ce:stamina"
+    ]
+  }
+}
