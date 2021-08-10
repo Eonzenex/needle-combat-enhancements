@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ShieldItem;
 import net.minecraft.util.Hand;
@@ -86,7 +87,7 @@ public class NCEClientInitializer implements ClientModInitializer
         });
 
         // Server stuff
-        // TODO: Should definitely NOT be on the ClientInit
+        // TODO: Should probably NOT be on the ClientInit
         ServerPlayNetworking.registerGlobalReceiver(
                 NCENetworkingConstants.BASH_CHANNEL,
                 (server, player, handler, buf, responseSender) -> {
@@ -101,7 +102,6 @@ public class NCEClientInitializer implements ClientModInitializer
                             var distance = (player.getPos().distanceTo(livingEntity.getPos()));
                             if (distance > 3) continue;
 
-//                            livingEntity.takeKnockback(bashForce, xDir, zDir);
                             livingEntity.setVelocity(new Vec3d(xDir, bashHeight, zDir).multiply(bashForce));
                         }
                     }

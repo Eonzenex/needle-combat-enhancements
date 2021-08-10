@@ -1,17 +1,18 @@
 package net.eonzenx.needle_ce.client;
 
-import net.eonzenx.needle_ce.NCE;
 import net.eonzenx.needle_ce.cardinal_components.stamina.StaminaComponent;
 import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
 import net.eonzenx.needle_ce.events.callbacks.BashCallback;
+import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
 import net.eonzenx.needle_ce.server.NCENetworkingConstants;
+import net.eonzenx.needle_ce.utils.ListExt;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.loader.util.sat4j.core.Vec;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
@@ -21,34 +22,86 @@ import java.util.List;
 
 public class BashEventHandler
 {
-    // TODO: Update CanPerformBash for Bash Proficiency
-    private static boolean CanPerformBash(PlayerEntity player, StaminaComponent stamina) {
-        if (!player.isCreative() && !stamina.canExecuteManoeuvre(StaminaConfig.BASH_COST)) {
-            return false;
+    private static float CalcBashCost(PlayerEntity player) {
+        // Calculate bash stamina cost
+        float bashCost = StaminaConfig.Bash.COST;
+        int bashProfEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.BASH_PROFICIENCY, player);
+        if (bashProfEnchantLvl > 0) {
+            bashCost = bashCost - (bashProfEnchantLvl * 0.4f);
         }
 
-        return true;
+        return bashCost;
+    }
+
+    private static boolean CanPerformBash(PlayerEntity player, StaminaComponent stamina) {
+        float bashCost = CalcBashCost(player);
+        return player.isCreative() || stamina.canExecuteManoeuvre(bashCost);
     }
 
     private static double CalcBashHeight(PlayerEntity player) {
-        return StaminaConfig.BASH_HEIGHT;
+        return StaminaConfig.Bash.HEIGHT;
     }
 
     private static float CalcBashForce(PlayerEntity player) {
-        return StaminaConfig.BASH_FORCE;
+        return StaminaConfig.Bash.FORCE;
     }
 
-    private static float CalcBashCost(PlayerEntity player) {
-        // Calculate dash stamina cost
-        return StaminaConfig.BASH_COST;
+    private static float CalcBashKnockbackForce(PlayerEntity player) {
+        // Calculate bash knockback force
+        float bashForce = StaminaConfig.Bash.Knockback.FORCE;
+        int bashKnockForceEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.HEAVY_WEIGHT, player);
+        if (bashKnockForceEnchantLvl > 0) {
+            bashForce = bashForce + (bashKnockForceEnchantLvl * 0.4f);
+        }
+
+        return bashForce;
     }
 
 
-    private static int[] toIntArray(List<Integer> list){
-        int[] ret = new int[list.size()];
-        for(int i = 0;i < ret.length;i++)
-            ret[i] = list.get(i);
-        return ret;
+    private static Vec3d GetPlayerForward(PlayerEntity player) {
+        return Vec3d.fromPolar(0, player.getYaw());
+    }
+
+    private static Box CalcBashHitBox(PlayerEntity player) {
+        var playerForward = GetPlayerForward(player);
+        var playerUp = new Vec3d(0, 1, 0);
+        var playerRight = playerForward.crossProduct(playerUp);
+        var pos = player.getPos();
+
+        var boxLowerLeft = pos;
+        boxLowerLeft = boxLowerLeft.add(playerRight.multiply(-StaminaConfig.Bash.Hitbox.WIDTH));
+        var boxUpperRight = pos;
+        boxUpperRight = boxUpperRight
+                .add(playerForward.multiply(StaminaConfig.Bash.Hitbox.DEPTH))
+                .add(playerRight.multiply(StaminaConfig.Bash.Hitbox.WIDTH))
+                .add(playerUp.multiply(StaminaConfig.Bash.Hitbox.HEIGHT));
+
+        return new Box(boxLowerLeft, boxUpperRight);
+    }
+
+    private static List<Integer> GetLivingEntityIds(PlayerEntity player, Box hitbox) {
+        var entities = player.getEntityWorld().getOtherEntities(player, hitbox);
+        var livingEntityIds = new ArrayList<Integer>();
+        for (var entity: entities) {
+            if (entity instanceof LivingEntity lEntity)
+            {
+                livingEntityIds.add(lEntity.getId());
+            }
+        }
+
+        return livingEntityIds;
+    }
+
+    private static PacketByteBuf CreateBashPacket(PlayerEntity player, List<Integer> livingEntityIds) {
+        var playerForward = GetPlayerForward(player);
+        var packet = PacketByteBufs.create();
+        packet.writeIntArray(ListExt.toIntArray(livingEntityIds));
+        packet.writeDouble(playerForward.x);
+        packet.writeDouble(playerForward.z);
+        packet.writeFloat(StaminaConfig.Bash.Knockback.FORCE);
+        packet.writeFloat(StaminaConfig.Bash.Knockback.HEIGHT);
+
+        return packet;
     }
 
 
@@ -69,41 +122,12 @@ public class BashEventHandler
                 if (!stamina.commitManoeuvre(bashCost)) return ActionResult.FAIL;
             }
 
-
             var finalBashDirection = bashDirection.add(new Vec3d(0, bashHeight, 0));
             player.updateVelocity(bashForce, finalBashDirection);
 
-            var playerForward = Vec3d.fromPolar(0, player.getYaw());
-            var playerUp = new Vec3d(0, 1, 0);
-            var playerRight = playerForward.crossProduct(playerUp);
-            var pos = player.getPos();
-
-            var boxLowerLeft = pos;
-            boxLowerLeft = boxLowerLeft.add(playerRight.multiply(-StaminaConfig.BASH_HITBOX_WIDTH));
-            var boxUpperRight = pos;
-            boxUpperRight = boxUpperRight
-                    .add(playerForward.multiply(StaminaConfig.BASH_HITBOX_DEPTH))
-                    .add(playerRight.multiply(StaminaConfig.BASH_HITBOX_WIDTH))
-                    .add(playerUp.multiply(StaminaConfig.BASH_HITBOX_HEIGHT));
-
-            var hitBox = new Box(boxLowerLeft, boxUpperRight);
-
-            var entities = player.getEntityWorld().getOtherEntities(player, hitBox);
-
-            var livingEntityIds = new ArrayList<Integer>();
-            for (var entity : entities) {
-                if (entity instanceof LivingEntity lEntity)
-                {
-                    livingEntityIds.add(lEntity.getId());
-                }
-            }
-
-            var packet = PacketByteBufs.create();
-            packet.writeIntArray(toIntArray(livingEntityIds));
-            packet.writeDouble(playerForward.x);
-            packet.writeDouble(playerForward.z);
-            packet.writeFloat(StaminaConfig.BASH_KNOCKBACK);
-            packet.writeFloat(StaminaConfig.BASH_KNOCKBACK_HEIGHT);
+            var hitBox = CalcBashHitBox(player);
+            var livingEntityIds = GetLivingEntityIds(player, hitBox);
+            var packet = CreateBashPacket(player, livingEntityIds);
 
             ClientPlayNetworking.send(NCENetworkingConstants.BASH_CHANNEL, packet);
 

@@ -17,9 +17,20 @@ import net.eonzenx.needle_ce.utils.Vec3DExt;
 
 public class DashEventHandler
 {
-    // TODO: Update CanPerformDash for Dash Proficiency
+    private static float CalcDashCost(PlayerEntity player) {
+        // Calculate dash stamina cost
+        float dashCost = StaminaConfig.Dash.COST;
+        int dashProfEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.DASH_PROFICIENCY, player);
+        if (dashProfEnchantLvl > 0) {
+            dashCost = dashCost - (dashProfEnchantLvl * 0.25f);
+        }
+
+        return dashCost;
+    }
+
     private static boolean CanPerformDash(PlayerEntity player, StaminaComponent stamina) {
-        if (!player.isCreative() && !stamina.canExecuteManoeuvre(StaminaConfig.DASH_COST)) {
+        float dashCost = CalcDashCost(player);
+        if (!player.isCreative() && !stamina.canExecuteManoeuvre(dashCost)) {
             return false;
         }
 
@@ -50,28 +61,24 @@ public class DashEventHandler
     }
 
     private static double CalcDashHeight(PlayerEntity player) {
-        double dashHeight = StaminaConfig.DASH_HEIGHT;
+        double dashHeight = StaminaConfig.Dash.HEIGHT;
         int vaultingEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.VAULTING, player);
         if (vaultingEnchantLvl > 0) {
-            dashHeight = dashHeight * (vaultingEnchantLvl + 1);
+            dashHeight = dashHeight + (vaultingEnchantLvl * 0.11f);
         }
 
         return dashHeight;
     }
 
     private static float CalcDashForce(PlayerEntity player) {
-        return StaminaConfig.DASH_FORCE;
-    }
-
-    private static float CalcDashCost(PlayerEntity player) {
-        // Calculate dash stamina cost
-        float dashCost = StaminaConfig.DASH_COST;
-        int dashProfEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.DASH_PROFICIENCY, player);
-        if (dashProfEnchantLvl > 0) {
-            dashCost = dashCost - ((float) dashProfEnchantLvl / 2);
+        // Calculate dash force
+        float dashForce = StaminaConfig.Dash.FORCE;
+        int quicksilverEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.QUICKSILVER, player);
+        if (quicksilverEnchantLvl > 0) {
+            dashForce = dashForce + (quicksilverEnchantLvl * 0.15f);
         }
 
-        return dashCost;
+        return dashForce;
     }
 
 
@@ -80,20 +87,16 @@ public class DashEventHandler
 
         var playerVelocity = player.getVelocity();
         var dot = dashAbsolute.normalize().dotProduct(playerVelocity.normalize());
+        var clampDot = dot < 0 ? 0 : dot;
 
-        if (dot > 0) {
-            var velocityInfluence = playerVelocity.multiply(dot);
-            return dashAbsolute.add(velocityInfluence);
-        } else {
-            return dashAbsolute;
-        }
+        var velocityInfluence = playerVelocity.multiply(clampDot);
+        return dashAbsolute.add(velocityInfluence);
     }
 
 
     public static void init()
     {
         DashCallback.EVENT.register(((player) -> {
-
             // Get the dash component from the player
             StaminaComponent stamina = StaminaComponent.get(player);
             if (!CanPerformDash(player, stamina)) return ActionResult.FAIL;
@@ -101,8 +104,8 @@ public class DashEventHandler
             Vec3d dashDirection = CalcDashDirection().normalize();
 
             // Calculate height after normalise otherwise height is normalised and reduced for diagonals
-            double dashHeight = CalcDashHeight(player);
             float dashForce = CalcDashForce(player);
+            double dashHeight = CalcDashHeight(player);
             float dashCost = CalcDashCost(player);
 
             // Perform dash
@@ -110,10 +113,11 @@ public class DashEventHandler
                 if (!stamina.commitManoeuvre(dashCost)) return ActionResult.FAIL;
             }
 
-            // Add height after normalize
-            var finalDashDirection = dashDirection.add(new Vec3d(0, dashHeight, 0));
+            var finalDashVelocity = CalcFinalDash(dashDirection, dashForce, player);
+            finalDashVelocity = finalDashVelocity.add(0, dashHeight, 0);
 
-            player.setVelocity(CalcFinalDash(finalDashDirection, dashForce, player));
+            // Add height after normalize
+            player.setVelocity(finalDashVelocity);
             return ActionResult.SUCCESS;
         }));
     }
