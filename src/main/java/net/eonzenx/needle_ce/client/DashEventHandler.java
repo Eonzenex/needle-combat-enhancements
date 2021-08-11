@@ -6,6 +6,7 @@ import net.eonzenx.needle_ce.events.callbacks.DashCallback;
 
 import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
 import net.eonzenx.needle_ce.utils.ArraysExt;
+import net.eonzenx.needle_ce.utils.Misc;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -99,14 +100,8 @@ public class DashEventHandler
 
     private static void PlaySound(PlayerEntity player) {
         var soundEvent = ArraysExt.getRandom(StaminaConfig.Dash.SFX);
-
-        var minPitch = 0.4f;
-        var maxPitch = 0.6f;
-        var sfxPitch = minPitch + (float) Math.random() * (maxPitch - minPitch);
-
-        var minVolume = 0.4f;
-        var maxVolume = 0.7f;
-        var sfxVolume = minVolume + (float) Math.random() * (maxVolume - minVolume);
+        var sfxPitch = Misc.randomInRange(0.4f, 0.6f);
+        var sfxVolume = Misc.randomInRange(0.4f, 0.7f);
 
         player.playSound(soundEvent, sfxVolume, sfxPitch);
     }

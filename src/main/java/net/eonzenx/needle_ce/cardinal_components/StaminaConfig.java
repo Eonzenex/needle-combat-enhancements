@@ -29,17 +29,21 @@ public class StaminaConfig
 
         public static final class Hitbox {
             public static final float WIDTH = 1.25f;
-            public static final float DEPTH = 2.5f;
+            public static final float DEPTH = 3f;
             public static final float HEIGHT = 2f;
         }
 
         public static final class Knockback {
             public static final float FORCE = 1.5f;
-            public static final float HEIGHT = 0.25f;
+            public static final float HEIGHT = 0.45f;
         }
 
-        public static final SoundEvent[] SFX = {
+        public static final SoundEvent[] HIT_SFX = {
                 SoundEvents.ITEM_SHIELD_BLOCK
+        };
+
+        public static final SoundEvent[] MISS_SFX = {
+                SoundEvents.ENTITY_SPLASH_POTION_THROW
         };
     }
 }

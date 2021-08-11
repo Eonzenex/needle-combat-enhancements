@@ -1,10 +1,10 @@
 package net.eonzenx.needle_ce.client;
 
-import net.eonzenx.needle_ce.NCE;
 import net.eonzenx.needle_ce.cardinal_components.stamina.StaminaComponent;
 import net.eonzenx.needle_ce.events.callbacks.BashCallback;
 import net.eonzenx.needle_ce.events.callbacks.DashCallback;
 import net.eonzenx.needle_ce.client.key_bindings.KeyBindings;
+import net.eonzenx.needle_ce.server.NCEBashServer;
 import net.eonzenx.needle_ce.server.NCENetworkingConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -12,12 +12,8 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ShieldItem;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
 
 public class NCEClientInitializer implements ClientModInitializer
 {
@@ -90,24 +86,7 @@ public class NCEClientInitializer implements ClientModInitializer
         // TODO: Should probably NOT be on the ClientInit
         ServerPlayNetworking.registerGlobalReceiver(
                 NCENetworkingConstants.BASH_CHANNEL,
-                (server, player, handler, buf, responseSender) -> {
-                    var livingEntityIds = buf.readIntArray();
-                    var xDir = buf.readDouble();
-                    var zDir = buf.readDouble();
-                    var bashForce = buf.readFloat();
-                    var bashHeight = buf.readFloat();
-
-                    for (var livingEntityId: livingEntityIds) {
-                        if (server.getOverworld().getEntityById(livingEntityId) instanceof LivingEntity livingEntity) {
-                            var distance = (player.getPos().distanceTo(livingEntity.getPos()));
-                            if (distance > 3) continue;
-
-                            livingEntity.setVelocity(new Vec3d(xDir, bashHeight, zDir).multiply(bashForce));
-                        }
-                    }
-
-                    System.out.println("Bashed!");
-                }
+                NCEBashServer::execute
         );
 
         System.out.println("Needle - Combat Enhancements: Client init complete");

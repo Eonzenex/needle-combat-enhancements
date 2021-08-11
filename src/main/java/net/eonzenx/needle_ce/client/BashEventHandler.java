@@ -6,13 +6,13 @@ import net.eonzenx.needle_ce.events.callbacks.BashCallback;
 import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
 import net.eonzenx.needle_ce.server.NCENetworkingConstants;
 import net.eonzenx.needle_ce.utils.ArraysExt;
+import net.eonzenx.needle_ce.utils.Misc;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -39,23 +39,13 @@ public class BashEventHandler
         return player.isCreative() || stamina.canExecuteManoeuvre(bashCost);
     }
 
+
     private static double CalcBashHeight(PlayerEntity player) {
         return StaminaConfig.Bash.HEIGHT;
     }
 
     private static float CalcBashForce(PlayerEntity player) {
         return StaminaConfig.Bash.FORCE;
-    }
-
-    private static float CalcBashKnockbackForce(PlayerEntity player) {
-        // Calculate bash knockback force
-        float bashForce = StaminaConfig.Bash.Knockback.FORCE;
-        int bashKnockForceEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.HEAVY_WEIGHT, player);
-        if (bashKnockForceEnchantLvl > 0) {
-            bashForce = bashForce + (bashKnockForceEnchantLvl * 0.4f);
-        }
-
-        return bashForce;
     }
 
 
@@ -99,22 +89,23 @@ public class BashEventHandler
         packet.writeIntArray(ArraysExt.toIntArray(livingEntityIds));
         packet.writeDouble(playerForward.x);
         packet.writeDouble(playerForward.z);
-        packet.writeFloat(StaminaConfig.Bash.Knockback.FORCE);
-        packet.writeFloat(StaminaConfig.Bash.Knockback.HEIGHT);
 
         return packet;
     }
 
-    private static void PlaySound(PlayerEntity player) {
-        var soundEvent = ArraysExt.getRandom(StaminaConfig.Bash.SFX);
 
-        var minPitch = 0.8f;
-        var maxPitch = 1.2f;
-        var sfxPitch = minPitch + (float) Math.random() * (maxPitch - minPitch);
+    private static void PlaySoundHit(PlayerEntity player) {
+        var soundEvent = ArraysExt.getRandom(StaminaConfig.Bash.HIT_SFX);
+        var sfxPitch = Misc.randomInRange(0.8f, 1.2f);
+        var sfxVolume = Misc.randomInRange(0.4f, 0.7f);
 
-        var minVolume = 0.4f;
-        var maxVolume = 0.7f;
-        var sfxVolume = minVolume + (float) Math.random() * (maxVolume - minVolume);
+        player.playSound(soundEvent, sfxVolume, sfxPitch);
+    }
+
+    private static void PlaySoundMiss(PlayerEntity player) {
+        var soundEvent = ArraysExt.getRandom(StaminaConfig.Bash.MISS_SFX);
+        var sfxPitch = Misc.randomInRange(0.4f, 0.6f);
+        var sfxVolume = Misc.randomInRange(0.4f, 0.7f);
 
         player.playSound(soundEvent, sfxVolume, sfxPitch);
     }
@@ -127,26 +118,22 @@ public class BashEventHandler
             StaminaComponent stamina = StaminaComponent.get(player);
             if (!CanPerformBash(player, stamina)) return ActionResult.FAIL;
 
-            var bashDirection = new Vec3d(0, 0, 1);
-            var bashForce = CalcBashForce(player);
-            var bashHeight = CalcBashHeight(player);
-            var bashCost = CalcBashCost(player);
-
             // Perform bash
             if (!player.isCreative()) {
-                if (!stamina.commitManoeuvre(bashCost)) return ActionResult.FAIL;
+                if (!stamina.commitManoeuvre(CalcBashCost(player))) return ActionResult.FAIL;
             }
 
-            var finalBashDirection = bashDirection.add(new Vec3d(0, bashHeight, 0));
-            player.updateVelocity(bashForce, finalBashDirection);
+            player.updateVelocity(CalcBashForce(player), new Vec3d(0, CalcBashHeight(player), 1));
 
             var hitBox = CalcBashHitBox(player);
             var livingEntityIds = GetLivingEntityIds(player, hitBox);
 
             if (livingEntityIds.size() != 0) {
-                PlaySound(player);
+                PlaySoundHit(player);
                 var packet = CreateBashPacket(player, livingEntityIds);
                 ClientPlayNetworking.send(NCENetworkingConstants.BASH_CHANNEL, packet);
+            } else {
+                PlaySoundMiss(player);
             }
 
             return ActionResult.SUCCESS;
