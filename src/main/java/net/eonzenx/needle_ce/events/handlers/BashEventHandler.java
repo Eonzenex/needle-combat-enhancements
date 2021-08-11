@@ -49,12 +49,8 @@ public class BashEventHandler
     }
 
 
-    private static Vec3d GetPlayerForward(PlayerEntity player) {
-        return Vec3d.fromPolar(0, player.getYaw());
-    }
-
     private static Box CalcBashHitBox(PlayerEntity player) {
-        var playerForward = GetPlayerForward(player);
+        var playerForward = Misc.GetPlayerForward(player);
         var playerUp = new Vec3d(0, 1, 0);
         var playerRight = playerForward.crossProduct(playerUp);
         var pos = player.getPos();
@@ -70,21 +66,8 @@ public class BashEventHandler
         return new Box(boxLowerLeft, boxUpperRight);
     }
 
-    private static List<Integer> GetLivingEntityIds(PlayerEntity player, Box hitbox) {
-        var entities = player.getEntityWorld().getOtherEntities(player, hitbox);
-        var livingEntityIds = new ArrayList<Integer>();
-        for (var entity: entities) {
-            if (entity instanceof LivingEntity lEntity)
-            {
-                livingEntityIds.add(lEntity.getId());
-            }
-        }
-
-        return livingEntityIds;
-    }
-
     private static PacketByteBuf CreateBashPacket(PlayerEntity player, List<Integer> livingEntityIds) {
-        var playerForward = GetPlayerForward(player);
+        var playerForward = Misc.GetPlayerForward(player);
         var packet = PacketByteBufs.create();
         packet.writeIntArray(ArraysExt.toIntArray(livingEntityIds));
         packet.writeDouble(playerForward.x);
@@ -114,11 +97,11 @@ public class BashEventHandler
     public static void init()
     {
         BashCallback.EVENT.register(((player) -> {
-            // Get the bash component from the player.
+            // Get the stamina component from the player.
             StaminaComponent stamina = StaminaComponent.get(player);
             if (!CanPerformBash(player, stamina)) return ActionResult.FAIL;
 
-            // Perform bash
+            // Commit bash
             if (!player.isCreative()) {
                 if (!stamina.commitManoeuvre(CalcBashCost(player))) return ActionResult.FAIL;
             }
@@ -126,7 +109,7 @@ public class BashEventHandler
             player.updateVelocity(CalcBashForce(player), new Vec3d(0, CalcBashHeight(player), 1));
 
             var hitBox = CalcBashHitBox(player);
-            var livingEntityIds = GetLivingEntityIds(player, hitBox);
+            var livingEntityIds = Misc.GetLivingEntityIds(player, hitBox);
 
             if (livingEntityIds.size() != 0) {
                 PlaySoundHit(player);

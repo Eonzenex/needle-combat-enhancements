@@ -10,7 +10,7 @@ public class NCE implements ModInitializer
 
 	@Override
 	public void onInitialize() {
-		System.out.println("Needle - Combat Enhancements initializing");
+		System.out.println("Needle - Combat Enhancements: Initializing");
 
 		EnchantmentRegistryHandler.init();
 		ItemRegistryHandler.init();

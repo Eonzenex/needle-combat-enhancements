@@ -24,7 +24,7 @@ public class StaminaConfig
     // Bash
     public static final class Bash {
         public static final float COST = 10f;
-        public static final float FORCE = 0.75f;
+        public static final float FORCE = 1f;
         public static final double HEIGHT = 0.1d;
 
         public static final class Hitbox {
@@ -45,5 +45,21 @@ public class StaminaConfig
         public static final SoundEvent[] MISS_SFX = {
                 SoundEvents.ENTITY_SPLASH_POTION_THROW
         };
+    }
+
+    // Slam
+    public static final class Slam {
+        public static final float MIN_DISTANCE_FROM_HEAD = 3.3f;
+        public static final float MAX_ANGLE = 55f;
+        public static final float ANTICIPATION_TIME = 1f;
+        public static final float COST = 10f;
+
+        public static final class Fall {
+            public static final float FORCE = 2f;
+        }
+
+        public static final class Knockback {
+            public static final float FORCE = 2f;
+        }
     }
 }
