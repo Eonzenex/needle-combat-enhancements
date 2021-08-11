@@ -1,5 +1,8 @@
 package net.eonzenx.needle_ce.cardinal_components;
 
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
+
 public class StaminaConfig
 {
     public static final float MIN_LEVEL = 10f;
@@ -12,6 +15,10 @@ public class StaminaConfig
         public static final float COST = 5f;
         public static final float FORCE = 0.6f;
         public static final double HEIGHT = 0.33d;
+
+        public static final SoundEvent[] SFX = {
+                SoundEvents.ENTITY_SPLASH_POTION_THROW
+        };
     }
 
     // Bash
@@ -30,5 +37,9 @@ public class StaminaConfig
             public static final float FORCE = 1.5f;
             public static final float HEIGHT = 0.25f;
         }
+
+        public static final SoundEvent[] SFX = {
+                SoundEvents.ITEM_SHIELD_BLOCK
+        };
     }
 }

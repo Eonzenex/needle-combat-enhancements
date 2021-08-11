@@ -5,14 +5,18 @@ import net.eonzenx.needle_ce.cardinal_components.stamina.StaminaComponent;
 import net.eonzenx.needle_ce.events.callbacks.DashCallback;
 
 import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
+import net.eonzenx.needle_ce.utils.ArraysExt;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.Vec3d;
 
 import net.eonzenx.needle_ce.utils.Vec3DExt;
+
+import java.util.Random;
 
 
 public class DashEventHandler
@@ -93,6 +97,19 @@ public class DashEventHandler
         return dashAbsolute.add(velocityInfluence);
     }
 
+    private static void PlaySound(PlayerEntity player) {
+        var soundEvent = ArraysExt.getRandom(StaminaConfig.Dash.SFX);
+
+        var minPitch = 0.4f;
+        var maxPitch = 0.6f;
+        var sfxPitch = minPitch + (float) Math.random() * (maxPitch - minPitch);
+
+        var minVolume = 0.4f;
+        var maxVolume = 0.7f;
+        var sfxVolume = minVolume + (float) Math.random() * (maxVolume - minVolume);
+
+        player.playSound(soundEvent, sfxVolume, sfxPitch);
+    }
 
     public static void init()
     {
@@ -118,6 +135,8 @@ public class DashEventHandler
 
             // Add height after normalize
             player.setVelocity(finalDashVelocity);
+            PlaySound(player);
+
             return ActionResult.SUCCESS;
         }));
     }

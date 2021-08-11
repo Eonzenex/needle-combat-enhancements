@@ -5,13 +5,14 @@ import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
 import net.eonzenx.needle_ce.events.callbacks.BashCallback;
 import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
 import net.eonzenx.needle_ce.server.NCENetworkingConstants;
-import net.eonzenx.needle_ce.utils.ListExt;
+import net.eonzenx.needle_ce.utils.ArraysExt;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -95,13 +96,27 @@ public class BashEventHandler
     private static PacketByteBuf CreateBashPacket(PlayerEntity player, List<Integer> livingEntityIds) {
         var playerForward = GetPlayerForward(player);
         var packet = PacketByteBufs.create();
-        packet.writeIntArray(ListExt.toIntArray(livingEntityIds));
+        packet.writeIntArray(ArraysExt.toIntArray(livingEntityIds));
         packet.writeDouble(playerForward.x);
         packet.writeDouble(playerForward.z);
         packet.writeFloat(StaminaConfig.Bash.Knockback.FORCE);
         packet.writeFloat(StaminaConfig.Bash.Knockback.HEIGHT);
 
         return packet;
+    }
+
+    private static void PlaySound(PlayerEntity player) {
+        var soundEvent = ArraysExt.getRandom(StaminaConfig.Bash.SFX);
+
+        var minPitch = 0.8f;
+        var maxPitch = 1.2f;
+        var sfxPitch = minPitch + (float) Math.random() * (maxPitch - minPitch);
+
+        var minVolume = 0.4f;
+        var maxVolume = 0.7f;
+        var sfxVolume = minVolume + (float) Math.random() * (maxVolume - minVolume);
+
+        player.playSound(soundEvent, sfxVolume, sfxPitch);
     }
 
 
@@ -127,9 +142,12 @@ public class BashEventHandler
 
             var hitBox = CalcBashHitBox(player);
             var livingEntityIds = GetLivingEntityIds(player, hitBox);
-            var packet = CreateBashPacket(player, livingEntityIds);
 
-            ClientPlayNetworking.send(NCENetworkingConstants.BASH_CHANNEL, packet);
+            if (livingEntityIds.size() != 0) {
+                PlaySound(player);
+                var packet = CreateBashPacket(player, livingEntityIds);
+                ClientPlayNetworking.send(NCENetworkingConstants.BASH_CHANNEL, packet);
+            }
 
             return ActionResult.SUCCESS;
         }));
