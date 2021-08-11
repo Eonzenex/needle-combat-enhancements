@@ -1,4 +1,4 @@
-package net.eonzenx.needle_ce.client;
+package net.eonzenx.needle_ce.events.handlers;
 
 import net.eonzenx.needle_ce.cardinal_components.stamina.StaminaComponent;
 import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
