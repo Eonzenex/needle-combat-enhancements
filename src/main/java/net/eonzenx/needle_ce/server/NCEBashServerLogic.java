@@ -11,7 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.math.Vec3d;
 
-public class NCEBashServer
+public class NCEBashServerLogic
 {
     private static float CalcKnockbackForce(PlayerEntity player) {
         // Calculate bash knockback force
@@ -41,10 +41,10 @@ public class NCEBashServer
                 var distance = player.getPos().distanceTo(livingEntity.getPos());
                 if (distance > StaminaConfig.Bash.Hitbox.DEPTH) continue;
 
-                var finalDash = new Vec3d(xDir, 0, zDir).multiply(bashKnockbackForce);
-                finalDash = finalDash.add(0, bashKnockbackHeight, 0);
+                var finalBash = new Vec3d(xDir, 0, zDir).multiply(bashKnockbackForce);
+                finalBash = finalBash.add(0, bashKnockbackHeight, 0);
 
-                livingEntity.setVelocity(finalDash);
+                livingEntity.setVelocity(finalBash);
             }
         }
     }

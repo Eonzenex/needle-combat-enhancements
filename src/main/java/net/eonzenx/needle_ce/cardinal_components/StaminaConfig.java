@@ -58,8 +58,24 @@ public class StaminaConfig
             public static final float FORCE = 2f;
         }
 
-        public static final class Knockback {
-            public static final float FORCE = 2f;
+        public static final class Hitbox {
+            public static final float WIDTH = 2f;
+            public static final float HEIGHT = 1.5f;
+            public static final float MAX_DISTANCE = 2.82f;
         }
+
+        public static final class Impact {
+            public static final float FORCE = 2f;
+            public static final float HEIGHT = 0.45f;
+            public static final float DAMAGE = 0.5f;
+        }
+
+        public static final SoundEvent[] HIT_SFX = {
+                SoundEvents.BLOCK_ANVIL_LAND
+        };
+
+        public static final SoundEvent[] MISS_SFX = {
+                SoundEvents.ITEM_SHIELD_BLOCK
+        };
     }
 }
