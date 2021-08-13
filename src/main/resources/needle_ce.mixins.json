@@ -4,6 +4,7 @@
   "package": "net.eonzenx.needle_ce.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "NCEItemMixin"
   ],
   "client": [
     "NCEMixin"
