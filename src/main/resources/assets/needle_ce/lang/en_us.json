@@ -4,11 +4,15 @@
   "key.needle_ce.dash":  "Dash key",
 
   "_comment02": "Enchantments",
+  "enchantment.needle_ce.stamina_recovery": "Stamina Recovery",
+
   "enchantment.needle_ce.quicksilver": "Quicksilver",
   "enchantment.needle_ce.vaulting": "Vaulting",
   "enchantment.needle_ce.gale_burst": "Gale Burst",
   "enchantment.needle_ce.dash_proficiency": "Dash Proficiency",
 
+  "enchantment.needle_ce.inertia": "Inertia",
+  "enchantment.needle_ce.spring_board": "Spring Board",
   "enchantment.needle_ce.bash_proficiency": "Bash Proficiency",
 
   "enchantment.needle_ce.slam_proficiency": "Slam Proficiency"

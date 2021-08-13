@@ -36,6 +36,7 @@ public class StaminaConfig
         public static final class Knockback {
             public static final float FORCE = 1.5f;
             public static final float HEIGHT = 0.45f;
+            public static final float DAMAGE = 0f;
         }
 
         public static final SoundEvent[] HIT_SFX = {

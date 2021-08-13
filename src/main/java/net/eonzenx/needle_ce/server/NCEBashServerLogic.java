@@ -4,7 +4,9 @@ import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
 import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -16,17 +18,36 @@ public class NCEBashServerLogic
     private static float CalcKnockbackForce(PlayerEntity player) {
         // Calculate bash knockback force
         float bashForce = StaminaConfig.Bash.Knockback.FORCE;
-        int bashKnockForceEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.HEAVY_WEIGHT, player);
+        int bashKnockForceEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.INERTIA, player);
         if (bashKnockForceEnchantLvl > 0) {
-            bashForce = bashForce + (bashKnockForceEnchantLvl * 0.4f);
+            bashForce = bashForce + (bashKnockForceEnchantLvl * 0.125f);
         }
 
         return bashForce;
     }
 
-    private static float CalcKnockbackHeight(PlayerEntity player) {
-        return StaminaConfig.Bash.Knockback.HEIGHT;
+    private static float CalcKnockbackDamage(PlayerEntity player) {
+        // Calculate bash damage, if any
+        float bashDamage = StaminaConfig.Bash.Knockback.DAMAGE;
+        int bashDamageEnchantLvl = EnchantmentHelper.getEquipmentLevel(Enchantments.THORNS, player);
+        if (bashDamageEnchantLvl > 0) {
+            bashDamage = bashDamage + (bashDamageEnchantLvl * 0.5f);
+        }
+
+        return bashDamage;
     }
+
+    private static float CalcKnockbackHeight(PlayerEntity player) {
+        // Calculate bash height
+        float bashHeight = StaminaConfig.Bash.Knockback.HEIGHT;
+        int bashHeightEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.SPRING_BOARD, player);
+        if (bashHeightEnchantLvl > 0) {
+            bashHeight = bashHeight + (bashHeightEnchantLvl * 0.2f);
+        }
+
+        return bashHeight;
+    }
+
 
     public static void execute(MinecraftServer server, PlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         var livingEntityIds = buf.readIntArray();
@@ -35,6 +56,7 @@ public class NCEBashServerLogic
 
         var bashKnockbackForce = CalcKnockbackForce(player);
         var bashKnockbackHeight = CalcKnockbackHeight(player);
+        var bashDamage = CalcKnockbackDamage(player);
 
         for (var livingEntityId: livingEntityIds) {
             if (server.getOverworld().getEntityById(livingEntityId) instanceof LivingEntity livingEntity) {
@@ -45,6 +67,7 @@ public class NCEBashServerLogic
                 finalBash = finalBash.add(0, bashKnockbackHeight, 0);
 
                 livingEntity.setVelocity(finalBash);
+                if (bashDamage > 0f) livingEntity.damage(DamageSource.player(player), bashDamage);
             }
         }
     }

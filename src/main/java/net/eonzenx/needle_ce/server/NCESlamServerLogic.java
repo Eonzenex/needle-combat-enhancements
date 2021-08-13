@@ -21,7 +21,7 @@ public class NCESlamServerLogic
     private static float CalcKnockbackForce(PlayerEntity player) {
         // Calculate bash knockback force
         float bashForce = StaminaConfig.Slam.Impact.FORCE;
-        int bashKnockForceEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.HEAVY_WEIGHT, player);
+        int bashKnockForceEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.INERTIA, player);
         if (bashKnockForceEnchantLvl > 0) {
             bashForce = bashForce + (bashKnockForceEnchantLvl * 0.4f);
         }
