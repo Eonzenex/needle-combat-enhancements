@@ -1,17 +1,17 @@
-package net.eonzenx.needle_ce.events.callbacks.slam;
+package net.eonzenx.needle_ce.client.events.callbacks;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResult;
 
-public interface SlamContactGroundCallback
+public interface DashCallback
 {
-    Event<SlamContactGroundCallback> EVENT = EventFactory.createArrayBacked(
-            SlamContactGroundCallback.class,
+    Event<DashCallback> EVENT = EventFactory.createArrayBacked(
+            DashCallback.class,
             (listeners) -> (player) -> {
-                for (SlamContactGroundCallback listener : listeners) {
-                    ActionResult result = listener.hitGround(player);
+                for (DashCallback listener : listeners) {
+                    ActionResult result = listener.dash(player);
 
                     if(result != ActionResult.PASS) {
                         return result;
@@ -22,5 +22,5 @@ public interface SlamContactGroundCallback
             }
     );
 
-    ActionResult hitGround(PlayerEntity player);
+    ActionResult dash(PlayerEntity player);
 }

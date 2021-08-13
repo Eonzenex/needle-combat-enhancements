@@ -1,17 +1,17 @@
-package net.eonzenx.needle_ce.events.callbacks.slam;
+package net.eonzenx.needle_ce.client.events.callbacks;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResult;
 
-public interface SlamStartFallCallback
+public interface BashCallback
 {
-    Event<SlamStartFallCallback> EVENT = EventFactory.createArrayBacked(
-            SlamStartFallCallback.class,
+    Event<BashCallback> EVENT = EventFactory.createArrayBacked(
+            BashCallback.class,
             (listeners) -> (player) -> {
-                for (SlamStartFallCallback listener : listeners) {
-                    ActionResult result = listener.startFall(player);
+                for (BashCallback listener : listeners) {
+                    ActionResult result = listener.bash(player);
 
                     if(result != ActionResult.PASS) {
                         return result;
@@ -22,5 +22,5 @@ public interface SlamStartFallCallback
             }
     );
 
-    ActionResult startFall(PlayerEntity player);
+    ActionResult bash(PlayerEntity player);
 }

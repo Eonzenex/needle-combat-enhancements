@@ -1,7 +1,7 @@
-package net.eonzenx.needle_ce.events.handlers.slam;
+package net.eonzenx.needle_ce.client.events.handlers.slam;
 
 import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
-import net.eonzenx.needle_ce.events.callbacks.slam.SlamStartFallCallback;
+import net.eonzenx.needle_ce.client.events.callbacks.slam.SlamStartFallCallback;
 import net.minecraft.util.ActionResult;
 
 

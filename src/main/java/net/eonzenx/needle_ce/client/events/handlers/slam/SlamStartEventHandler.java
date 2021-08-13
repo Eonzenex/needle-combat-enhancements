@@ -1,9 +1,9 @@
-package net.eonzenx.needle_ce.events.handlers.slam;
+package net.eonzenx.needle_ce.client.events.handlers.slam;
 
 import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
 import net.eonzenx.needle_ce.cardinal_components.slam.SlamComponent;
 import net.eonzenx.needle_ce.cardinal_components.stamina.StaminaComponent;
-import net.eonzenx.needle_ce.events.callbacks.slam.SlamStartAnticipationCallback;
+import net.eonzenx.needle_ce.client.events.callbacks.slam.SlamStartAnticipationCallback;
 import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,7 +12,7 @@ import net.minecraft.util.ActionResult;
 
 public class SlamStartEventHandler
 {
-    private static float CalcSlamCost(PlayerEntity player) {
+    public static float CalcSlamCost(PlayerEntity player) {
         // Calculate bash stamina cost
         float slamCost = StaminaConfig.Slam.COST;
         int slamProfEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.SLAM_PROFICIENCY, player);
@@ -23,7 +23,7 @@ public class SlamStartEventHandler
         return slamCost;
     }
 
-    private static boolean CanPerformBash(PlayerEntity player, StaminaComponent stamina) {
+    public static boolean CanPerformSlam(PlayerEntity player, StaminaComponent stamina) {
         float bashCost = CalcSlamCost(player);
         return player.isCreative() || stamina.canExecuteManoeuvre(bashCost);
     }
@@ -34,7 +34,7 @@ public class SlamStartEventHandler
         SlamStartAnticipationCallback.EVENT.register(((player) -> {
             // Get the stamina component from the player.
             StaminaComponent stamina = StaminaComponent.get(player);
-            if (!CanPerformBash(player, stamina)) return ActionResult.FAIL;
+            if (!CanPerformSlam(player, stamina)) return ActionResult.FAIL;
 
             // Commit slam
             if (!player.isCreative()) {

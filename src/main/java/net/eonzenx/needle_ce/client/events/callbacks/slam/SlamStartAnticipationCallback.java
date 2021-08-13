@@ -1,4 +1,4 @@
-package net.eonzenx.needle_ce.events.callbacks.slam;
+package net.eonzenx.needle_ce.client.events.callbacks.slam;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;

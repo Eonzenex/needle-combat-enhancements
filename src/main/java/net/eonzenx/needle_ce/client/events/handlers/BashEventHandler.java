@@ -1,8 +1,8 @@
-package net.eonzenx.needle_ce.events.handlers;
+package net.eonzenx.needle_ce.client.events.handlers;
 
 import net.eonzenx.needle_ce.cardinal_components.stamina.StaminaComponent;
 import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
-import net.eonzenx.needle_ce.events.callbacks.BashCallback;
+import net.eonzenx.needle_ce.client.events.callbacks.BashCallback;
 import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
 import net.eonzenx.needle_ce.server.NCENetworkingConstants;
 import net.eonzenx.needle_ce.utils.ArraysExt;
@@ -10,20 +10,18 @@ import net.eonzenx.needle_ce.utils.Misc;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class BashEventHandler
 {
-    private static float CalcBashCost(PlayerEntity player) {
+    public static float CalcBashCost(PlayerEntity player) {
         // Calculate bash stamina cost
         float bashCost = StaminaConfig.Bash.COST;
         int bashProfEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.BASH_PROFICIENCY, player);
@@ -34,22 +32,22 @@ public class BashEventHandler
         return bashCost;
     }
 
-    private static boolean CanPerformBash(PlayerEntity player, StaminaComponent stamina) {
+    public static boolean CanPerformBash(PlayerEntity player, StaminaComponent stamina) {
         float bashCost = CalcBashCost(player);
         return player.isCreative() || stamina.canExecuteManoeuvre(bashCost);
     }
 
 
-    private static double CalcBashHeight(PlayerEntity player) {
+    public static double CalcBashHeight(PlayerEntity player) {
         return StaminaConfig.Bash.HEIGHT;
     }
 
-    private static float CalcBashForce(PlayerEntity player) {
+    public static float CalcBashForce(PlayerEntity player) {
         return StaminaConfig.Bash.FORCE;
     }
 
 
-    private static Box CalcBashHitBox(PlayerEntity player) {
+    public static Box CalcBashHitBox(PlayerEntity player) {
         var playerForward = Misc.GetPlayerForward(player);
         var playerUp = new Vec3d(0, 1, 0);
         var playerRight = playerForward.crossProduct(playerUp);
@@ -66,7 +64,7 @@ public class BashEventHandler
         return new Box(boxLowerLeft, boxUpperRight);
     }
 
-    private static PacketByteBuf CreateBashPacket(PlayerEntity player, List<Integer> livingEntityIds) {
+    public static PacketByteBuf CreateBashPacket(PlayerEntity player, List<Integer> livingEntityIds) {
         var playerForward = Misc.GetPlayerForward(player);
         var packet = PacketByteBufs.create();
         packet.writeIntArray(ArraysExt.toIntArray(livingEntityIds));
@@ -77,7 +75,7 @@ public class BashEventHandler
     }
 
 
-    private static void PlaySoundHit(PlayerEntity player) {
+    public static void PlaySoundHit(PlayerEntity player) {
         var soundEvent = ArraysExt.getRandom(StaminaConfig.Bash.HIT_SFX);
         var sfxPitch = Misc.randomInRange(0.8f, 1.2f);
         var sfxVolume = Misc.randomInRange(0.4f, 0.7f);
@@ -85,7 +83,7 @@ public class BashEventHandler
         player.playSound(soundEvent, sfxVolume, sfxPitch);
     }
 
-    private static void PlaySoundMiss(PlayerEntity player) {
+    public static void PlaySoundMiss(PlayerEntity player) {
         var soundEvent = ArraysExt.getRandom(StaminaConfig.Bash.MISS_SFX);
         var sfxPitch = Misc.randomInRange(0.4f, 0.6f);
         var sfxVolume = Misc.randomInRange(0.4f, 0.7f);

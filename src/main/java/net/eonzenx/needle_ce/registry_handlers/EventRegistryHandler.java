@@ -5,14 +5,14 @@ import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
 import net.eonzenx.needle_ce.cardinal_components.slam.SlamComponent;
 import net.eonzenx.needle_ce.cardinal_components.stamina.StaminaComponent;
 import net.eonzenx.needle_ce.client.key_bindings.KeyBindings;
-import net.eonzenx.needle_ce.events.callbacks.BashCallback;
-import net.eonzenx.needle_ce.events.callbacks.DashCallback;
-import net.eonzenx.needle_ce.events.callbacks.slam.SlamStartAnticipationCallback;
-import net.eonzenx.needle_ce.events.handlers.BashEventHandler;
-import net.eonzenx.needle_ce.events.handlers.DashEventHandler;
-import net.eonzenx.needle_ce.events.handlers.slam.SlamContactGroundEventHandler;
-import net.eonzenx.needle_ce.events.handlers.slam.SlamStartEventHandler;
-import net.eonzenx.needle_ce.events.handlers.slam.SlamFallEventHandler;
+import net.eonzenx.needle_ce.client.events.callbacks.BashCallback;
+import net.eonzenx.needle_ce.client.events.callbacks.DashCallback;
+import net.eonzenx.needle_ce.client.events.callbacks.slam.SlamStartAnticipationCallback;
+import net.eonzenx.needle_ce.client.events.handlers.BashEventHandler;
+import net.eonzenx.needle_ce.client.events.handlers.DashEventHandler;
+import net.eonzenx.needle_ce.client.events.handlers.slam.SlamContactGroundEventHandler;
+import net.eonzenx.needle_ce.client.events.handlers.slam.SlamStartEventHandler;
+import net.eonzenx.needle_ce.client.events.handlers.slam.SlamFallEventHandler;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
@@ -62,6 +62,9 @@ public class EventRegistryHandler
         var player = client.player;
         if (player == null) { return; }
 
+        var slamComponent = SlamComponent.get(player);
+        if (slamComponent.getIsAnticipatingSlam() || slamComponent.getIsSlamming()) return;
+
         if (DASH_KEY.isPressed() && !DashThisKeyPress) {
             DashThisKeyPress = true;
             DashCallback.EVENT.invoker().dash(player);
@@ -77,7 +80,8 @@ public class EventRegistryHandler
         var player = client.player;
         if (player == null) { return; }
 
-        if (IsTryingToSlam(player)) return;
+        var slamComponent = SlamComponent.get(player);
+        if (slamComponent.getIsAnticipatingSlam() || slamComponent.getIsSlamming()) return;
 
         var mc_options = mcClient.options;
 

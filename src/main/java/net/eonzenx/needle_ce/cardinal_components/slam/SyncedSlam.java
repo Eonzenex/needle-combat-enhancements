@@ -2,8 +2,8 @@ package net.eonzenx.needle_ce.cardinal_components.slam;
 
 
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
-import net.eonzenx.needle_ce.events.callbacks.slam.SlamContactGroundCallback;
-import net.eonzenx.needle_ce.events.callbacks.slam.SlamStartFallCallback;
+import net.eonzenx.needle_ce.client.events.callbacks.slam.SlamContactGroundCallback;
+import net.eonzenx.needle_ce.client.events.callbacks.slam.SlamStartFallCallback;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 

@@ -1,8 +1,8 @@
-package net.eonzenx.needle_ce.events.handlers;
+package net.eonzenx.needle_ce.client.events.handlers;
 
 import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
 import net.eonzenx.needle_ce.cardinal_components.stamina.StaminaComponent;
-import net.eonzenx.needle_ce.events.callbacks.DashCallback;
+import net.eonzenx.needle_ce.client.events.callbacks.DashCallback;
 
 import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
 import net.eonzenx.needle_ce.utils.ArraysExt;
@@ -13,18 +13,15 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.Vec3d;
 
 import net.eonzenx.needle_ce.utils.Vec3DExt;
 
-import java.util.Random;
-
 
 public class DashEventHandler
 {
-    private static float CalcDashCost(PlayerEntity player) {
+    public static float CalcDashCost(PlayerEntity player) {
         // Calculate dash stamina cost
         float dashCost = StaminaConfig.Dash.COST;
         int dashProfEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.DASH_PROFICIENCY, player);
@@ -35,7 +32,7 @@ public class DashEventHandler
         return dashCost;
     }
 
-    private static boolean CanPerformDash(PlayerEntity player, StaminaComponent stamina) {
+    public static boolean CanPerformDash(PlayerEntity player, StaminaComponent stamina) {
         float dashCost = CalcDashCost(player);
         if (!player.isCreative() && !stamina.canExecuteManoeuvre(dashCost)) {
             return false;
@@ -45,7 +42,7 @@ public class DashEventHandler
         return galeBurstLvl != 0 || player.isOnGround();
     }
 
-    private static Vec3d CalcDashDirection() {
+    public static Vec3d CalcDashDirection() {
         // Setup dash properties
         GameOptions mc_options = MinecraftClient.getInstance().options;
         Vec3d dashDirection = Vec3d.ZERO;
@@ -67,7 +64,7 @@ public class DashEventHandler
         return dashDirection;
     }
 
-    private static double CalcDashHeight(PlayerEntity player) {
+    public static double CalcDashHeight(PlayerEntity player) {
         double dashHeight = StaminaConfig.Dash.HEIGHT;
         int vaultingEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.VAULTING, player);
         if (vaultingEnchantLvl > 0) {
@@ -77,7 +74,7 @@ public class DashEventHandler
         return dashHeight;
     }
 
-    private static float CalcDashForce(PlayerEntity player) {
+    public static float CalcDashForce(PlayerEntity player) {
         // Calculate dash force
         float dashForce = StaminaConfig.Dash.FORCE;
         int quicksilverEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.QUICKSILVER, player);
@@ -89,7 +86,7 @@ public class DashEventHandler
     }
 
 
-    private static Vec3d CalcFinalDash(Vec3d dashDirection, float dashForce, PlayerEntity player) {
+    public static Vec3d CalcFinalDash(Vec3d dashDirection, float dashForce, PlayerEntity player) {
         var dashAbsolute = Vec3DExt.relativeVectorToWorldSpace(dashDirection, dashForce, player.getYaw());
 
         var playerVelocity = player.getVelocity();
@@ -100,7 +97,7 @@ public class DashEventHandler
         return dashAbsolute.add(velocityInfluence);
     }
 
-    private static void PlaySound(PlayerEntity player) {
+    public static void PlaySound(PlayerEntity player) {
         var soundEvent = ArraysExt.getRandom(StaminaConfig.Dash.SFX);
         var sfxPitch = Misc.randomInRange(0.4f, 0.6f);
         var sfxVolume = Misc.randomInRange(0.4f, 0.7f);
@@ -109,7 +106,7 @@ public class DashEventHandler
     }
 
 
-    private static void SpawnImpactParticle(PlayerEntity player, ParticleEffect type) {
+    public static void SpawnImpactParticle(PlayerEntity player, ParticleEffect type) {
         var pos = player.getPos();
         var particlePos = pos.add(Math.random(), Math.random(), Math.random());
 
