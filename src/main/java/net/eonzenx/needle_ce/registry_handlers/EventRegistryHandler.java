@@ -23,6 +23,7 @@ import net.minecraft.item.ShieldItem;
 import net.minecraft.item.ToolItem;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.world.RaycastContext;
 
 public class EventRegistryHandler
 {
@@ -37,7 +38,10 @@ public class EventRegistryHandler
 
 
     private static boolean IsTryingToSlam(PlayerEntity player) {
-        var hitResult = player.raycast(StaminaConfig.Slam.MIN_DISTANCE_FROM_HEAD, mcClient.getTickDelta(), true);
+        var pos = player.getPos();
+        var cxt = new RaycastContext(pos, pos.add(0, -StaminaConfig.Slam.MIN_HEIGHT, 0), RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.ANY, player);
+
+        var hitResult = player.getEntityWorld().raycast(cxt);
         if (hitResult.getType() != HitResult.Type.MISS) return false;
 
         return player.getPitch() > StaminaConfig.Slam.MAX_ANGLE;

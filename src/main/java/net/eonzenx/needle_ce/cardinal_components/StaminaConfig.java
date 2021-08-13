@@ -49,7 +49,7 @@ public class StaminaConfig
 
     // Slam
     public static final class Slam {
-        public static final float MIN_DISTANCE_FROM_HEAD = 3.3f;
+        public static final float MIN_HEIGHT = 2.2f;
         public static final float MAX_ANGLE = 55f;
         public static final float ANTICIPATION_TIME = 0.4f;
         public static final float COST = 10f;
