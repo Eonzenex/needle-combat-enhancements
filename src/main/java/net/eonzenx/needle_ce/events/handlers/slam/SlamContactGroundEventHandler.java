@@ -65,7 +65,7 @@ public class SlamContactGroundEventHandler
     private static void PlaySoundMiss(PlayerEntity player) {
         var soundEvent = ArraysExt.getRandom(StaminaConfig.Slam.MISS_SFX);
         var sfxPitch = Misc.randomInRange(0.4f, 0.6f);
-        var sfxVolume = Misc.randomInRange(0.4f, 0.7f);
+        var sfxVolume = Misc.randomInRange(0.7f, 1f);
 
         player.playSound(soundEvent, sfxVolume, sfxPitch);
     }
@@ -98,9 +98,8 @@ public class SlamContactGroundEventHandler
                 PlaySoundMiss(player);
             }
 
-            for (var i = 0; i < 200; i++) {
-                // ParticleTypes.CRIT and POOF are candidates
-                SpawnImpactParticle(player, new BlockStateParticleEffect(ParticleTypes.BLOCK, player.getBlockStateAtPos()));
+            for (var i = 0; i < 100; i++) {
+                SpawnImpactParticle(player, ParticleTypes.CRIT);
             }
 
             return ActionResult.SUCCESS;

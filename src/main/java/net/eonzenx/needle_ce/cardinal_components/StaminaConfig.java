@@ -51,7 +51,7 @@ public class StaminaConfig
     public static final class Slam {
         public static final float MIN_DISTANCE_FROM_HEAD = 3.3f;
         public static final float MAX_ANGLE = 55f;
-        public static final float ANTICIPATION_TIME = 1f;
+        public static final float ANTICIPATION_TIME = 0.4f;
         public static final float COST = 10f;
 
         public static final class Fall {
@@ -71,11 +71,11 @@ public class StaminaConfig
         }
 
         public static final SoundEvent[] HIT_SFX = {
-                SoundEvents.BLOCK_ANVIL_LAND
+                SoundEvents.ITEM_SHIELD_BLOCK
         };
 
         public static final SoundEvent[] MISS_SFX = {
-                SoundEvents.ITEM_SHIELD_BLOCK
+                SoundEvents.BLOCK_CALCITE_HIT
         };
     }
 }

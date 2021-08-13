@@ -16,12 +16,12 @@ public class CComponentHandler implements EntityComponentInitializer
 {
     // retrieving a type for my component or for a required dependency
     public static final ComponentKey<StaminaComponent> STAMINA = ComponentRegistry.getOrCreate(new Identifier(NCE.MOD_ID, "stamina"), StaminaComponent.class);
-    public static final ComponentKey<SlamComponent> ANTICIPATING_SLAM = ComponentRegistry.getOrCreate(new Identifier(NCE.MOD_ID, "anticipating_slam"), SlamComponent.class);
+    public static final ComponentKey<SlamComponent> SLAM = ComponentRegistry.getOrCreate(new Identifier(NCE.MOD_ID, "slam"), SlamComponent.class);
 
     @Override
     public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry)
     {
         registry.registerForPlayers(STAMINA, PlayerStamina::new, RespawnCopyStrategy.ALWAYS_COPY);
-        registry.registerForPlayers(ANTICIPATING_SLAM, PlayerSlam::new, RespawnCopyStrategy.ALWAYS_COPY);
+        registry.registerForPlayers(SLAM, PlayerSlam::new, RespawnCopyStrategy.ALWAYS_COPY);
     }
 }

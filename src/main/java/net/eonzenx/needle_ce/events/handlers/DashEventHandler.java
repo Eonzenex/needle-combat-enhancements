@@ -11,6 +11,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.Vec3d;
@@ -106,8 +108,22 @@ public class DashEventHandler
         player.playSound(soundEvent, sfxVolume, sfxPitch);
     }
 
-    public static void init()
-    {
+
+    private static void SpawnImpactParticle(PlayerEntity player, ParticleEffect type) {
+        var pos = player.getPos();
+        var particlePos = pos.add(Math.random(), Math.random(), Math.random());
+
+        var vel = player.getVelocity();
+        var particleVel = vel.multiply(-0.5f);
+
+        player.getEntityWorld().addParticle(
+                type,
+                particlePos.x, particlePos.y, particlePos.z,
+                particleVel.x, particleVel.y, particleVel.z);
+    }
+
+
+    public static void init() {
         DashCallback.EVENT.register(((player) -> {
             // Get the dash component from the player
             StaminaComponent stamina = StaminaComponent.get(player);
@@ -126,11 +142,15 @@ public class DashEventHandler
             }
 
             var finalDashVelocity = CalcFinalDash(dashDirection, dashForce, player);
-            finalDashVelocity = finalDashVelocity.add(0, dashHeight, 0);
+            finalDashVelocity = new Vec3d(finalDashVelocity.x, dashHeight, finalDashVelocity.z);
 
             // Add height after normalize
             player.setVelocity(finalDashVelocity);
             PlaySound(player);
+
+            for (var i = 0; i < 5; i++) {
+                SpawnImpactParticle(player, ParticleTypes.POOF);
+            }
 
             return ActionResult.SUCCESS;
         }));

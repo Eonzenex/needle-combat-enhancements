@@ -48,7 +48,7 @@
   "custom": {
     "cardinal-components": [
       "needle_ce:stamina",
-      "needle_ce:anticipating_slam"
+      "needle_ce:slam"
     ]
   }
 }

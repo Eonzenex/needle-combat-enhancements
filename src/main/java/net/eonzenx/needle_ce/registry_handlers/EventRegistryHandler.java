@@ -103,6 +103,9 @@ public class EventRegistryHandler
         var player = client.player;
         if (player == null) { return; }
 
+        var slamComponent = SlamComponent.get(player);
+        if (slamComponent.getIsSlamming() || slamComponent.getIsAnticipatingSlam()) return;
+
         var mc_options = mcClient.options;
         var SLAM_KEY_PRESSED = (mc_options.keyAttack.isPressed() && IsInstanceOfSlamItem(player.getMainHandStack().getItem()))
                 || (mc_options.keyUse.isPressed() && IsInstanceOfSlamItem(player.getOffHandStack().getItem()));
@@ -124,7 +127,7 @@ public class EventRegistryHandler
         var player = client.player;
         if (player == null) { return; }
 
-        var slamComponent = SlamComponent.getIsAnticipatingSlam(player);
+        var slamComponent = SlamComponent.get(player);
         if (slamComponent.getIsAnticipatingSlam()) {
             slamComponent.tick(player, mcClient.getTickDelta());
         }

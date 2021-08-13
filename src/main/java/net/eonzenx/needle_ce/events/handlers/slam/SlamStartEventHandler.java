@@ -41,7 +41,7 @@ public class SlamStartEventHandler
                 if (!stamina.commitManoeuvre(CalcSlamCost(player))) return ActionResult.FAIL;
             }
 
-            var anticipatingSlamComponent = SlamComponent.getIsAnticipatingSlam(player);
+            var anticipatingSlamComponent = SlamComponent.get(player);
             anticipatingSlamComponent.set(StaminaConfig.Slam.ANTICIPATION_TIME);
 
             var yCap = 0.1f;

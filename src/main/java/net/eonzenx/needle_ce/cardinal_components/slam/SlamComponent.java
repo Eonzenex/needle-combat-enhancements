@@ -6,7 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 
 public interface SlamComponent extends Component {
 
-    static <T> SlamComponent getIsAnticipatingSlam(T provider) { return CComponentHandler.ANTICIPATING_SLAM.get(provider); }
+    static <T> SlamComponent get(T provider) { return CComponentHandler.SLAM.get(provider); }
 
     boolean getIsAnticipatingSlam();
     boolean getIsSlamming();
