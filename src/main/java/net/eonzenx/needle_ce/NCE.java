@@ -9,6 +9,7 @@ public class NCE implements ModInitializer
 {
 	public static final String MOD_ID = "needle_ce";
 
+
 	@Override
 	public void onInitialize() {
 		System.out.println("Needle - Combat Enhancements: Initializing");
@@ -16,7 +17,6 @@ public class NCE implements ModInitializer
 		EnchantmentRegistryHandler.init();
 		ItemRegistryHandler.init();
 	}
-
 
 	public static Identifier newId(String id) {
 		return new Identifier(MOD_ID, id);

@@ -17,6 +17,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.util.Hand;
@@ -51,16 +52,18 @@ public class EventRegistryHandler
 
 
     private static void StaminaTickEvent(MinecraftClient client) {
+        if (client.isPaused()) return;
         var player = client.player;
-        if (player == null) { return; }
+        if (player == null) return;
 
         StaminaComponent stamina = StaminaComponent.get(player);
         stamina.tick(player, mcClient.getTickDelta());
     }
 
     private static void DashTriggerEvent(MinecraftClient client) {
+        if (client.isPaused()) return;
         var player = client.player;
-        if (player == null) { return; }
+        if (player == null) return;
 
         var slamComponent = SlamComponent.get(player);
         if (slamComponent.getIsAnticipatingSlam() || slamComponent.getIsSlamming()) return;
@@ -77,8 +80,9 @@ public class EventRegistryHandler
     }
 
     private static void BashTriggerEvent(MinecraftClient client) {
+        if (client.isPaused()) return;
         var player = client.player;
-        if (player == null) { return; }
+        if (player == null) return;
 
         var slamComponent = SlamComponent.get(player);
         if (slamComponent.getIsAnticipatingSlam() || slamComponent.getIsSlamming()) return;
@@ -106,8 +110,9 @@ public class EventRegistryHandler
 
 
     private static void StartSlamTriggerEvent(MinecraftClient client) {
+        if (client.isPaused()) return;
         var player = client.player;
-        if (player == null) { return; }
+        if (player == null) return;
 
         var slamComponent = SlamComponent.get(player);
         if (slamComponent.getIsSlamming() || slamComponent.getIsAnticipatingSlam()) return;
@@ -123,15 +128,16 @@ public class EventRegistryHandler
             }
         }
 
-        // Prevent holding bash
+        // Prevent holding slam
         if (!SLAM_KEY_PRESSED && SlamThisKeyPress) {
             SlamThisKeyPress = false;
         }
     }
 
     private static void SlamTickEvent(MinecraftClient client) {
+        if (client.isPaused()) return;
         var player = client.player;
-        if (player == null) { return; }
+        if (player == null) return;
 
         var slamComponent = SlamComponent.get(player);
         if (slamComponent.getIsAnticipatingSlam()) {
@@ -167,6 +173,5 @@ public class EventRegistryHandler
         // Slam trigger event
         ClientTickEvents.END_CLIENT_TICK.register(EventRegistryHandler::StartSlamTriggerEvent);
         ClientTickEvents.END_CLIENT_TICK.register(EventRegistryHandler::SlamTickEvent);
-//        ClientTickEvents.END_CLIENT_TICK.register(EventRegistryHandler::SlamTickEvent);
     }
 }

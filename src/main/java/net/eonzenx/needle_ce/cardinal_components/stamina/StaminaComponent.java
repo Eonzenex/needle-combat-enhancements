@@ -8,7 +8,7 @@ public interface StaminaComponent extends Component {
 
     static <T> StaminaComponent get(T provider) { return CComponentHandler.STAMINA.get(provider); }
 
-    float get();
+    float getCurrent();
 
     boolean canExecuteManoeuvre(float cost);
     boolean commitManoeuvre(float cost);

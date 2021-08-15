@@ -23,7 +23,7 @@ public class SyncedStaminaComponent implements StaminaComponent, AutoSyncedCompo
 
 
     @Override
-    public float get() { return stamina; }
+    public float getCurrent() { return stamina; }
 
     @Override
     public boolean canExecuteManoeuvre(float cost) {
@@ -55,10 +55,12 @@ public class SyncedStaminaComponent implements StaminaComponent, AutoSyncedCompo
 
     @Override
     public void tryRegenerate(PlayerEntity player, float deltaTime) {
+        // Pause blocking is done in the event trigger
+
         if (regenLocked) return;
         if (regenBlocked) return;
 
-        if (regenBlockTime == 0f) {
+        if (regenBlockTime == 0f && getCurrent() < StaminaConfig.MAX(player.experienceLevel)) {
             regenerate(player, deltaTime);
         }
     }
