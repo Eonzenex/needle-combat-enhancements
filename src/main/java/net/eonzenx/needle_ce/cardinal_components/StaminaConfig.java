@@ -27,6 +27,10 @@ public class StaminaConfig
         public static final float FORCE = 1f;
         public static final double HEIGHT = 0.1d;
 
+        public static final class Stun {
+            public static final float BASE_TIME = 1.25f;
+        }
+
         public static final class Hitbox {
             public static final float WIDTH = 1.25f;
             public static final float DEPTH = 3f;
@@ -69,6 +73,10 @@ public class StaminaConfig
             public static final float FORCE = 2f;
             public static final float HEIGHT = 0.45f;
             public static final float DAMAGE = 0.5f;
+        }
+
+        public static final class Stun {
+            public static final float BASE_TIME = 1.2f;
         }
 
         public static final SoundEvent[] HIT_SFX = {

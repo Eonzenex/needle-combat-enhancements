@@ -3,8 +3,6 @@ package net.eonzenx.needle_ce.mixin;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.tag.Tag;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,9 +29,7 @@ public abstract class NCEAxeItemMixin extends MiningToolItem
 			}
 
 			boolean finalWasOffhand = wasOffhand;
-			itemStack.damage(2, attacker, (e) -> {
-				e.sendEquipmentBreakStatus(finalWasOffhand ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND);
-			});
+			itemStack.damage(2, attacker, (e) -> e.sendEquipmentBreakStatus(finalWasOffhand ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND));
 		}
 
 		return result;

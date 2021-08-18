@@ -2,10 +2,13 @@ package net.eonzenx.needle_ce.server;
 
 import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
 import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
+import net.eonzenx.needle_ce.registry_handlers.StatusEffectRegistryHandler;
+import net.eonzenx.needle_ce.utils.mixin.IGetTicksPerSec;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.BlockStateParticleEffect;
@@ -19,14 +22,14 @@ import net.minecraft.util.math.Vec3d;
 public class NCESlamServerLogic
 {
     private static float CalcKnockbackForce(PlayerEntity player) {
-        // Calculate bash knockback force
-        float bashForce = StaminaConfig.Slam.Impact.FORCE;
-        int bashKnockForceEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.INERTIA, player);
-        if (bashKnockForceEnchantLvl > 0) {
-            bashForce = bashForce + (bashKnockForceEnchantLvl * 0.4f);
+        // Calculate slam knockback force
+        float slamForce = StaminaConfig.Slam.Impact.FORCE;
+        int slamForceEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.HEAVY_WEIGHT, player);
+        if (slamForceEnchantLvl > 0) {
+            slamForce += (slamForceEnchantLvl * 0.4f);
         }
 
-        return bashForce;
+        return slamForce;
     }
 
     private static float CalcKnockbackHeight(PlayerEntity player) {
@@ -35,6 +38,25 @@ public class NCESlamServerLogic
 
     private static float CalcDamage(PlayerEntity player) {
         return StaminaConfig.Slam.Impact.DAMAGE;
+    }
+
+    private static float CalcStunTime(PlayerEntity player, LivingEntity lEntity) {
+        // Calculate stun time
+        var stunImmunity = lEntity.getStatusEffect(StatusEffectRegistryHandler.STUN_IMMUNITY);
+        if (stunImmunity != null) return 0f;
+
+        var stunTime = StaminaConfig.Slam.Stun.BASE_TIME;
+        int impactEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.IMPACT, player);
+        if (impactEnchantLvl > 0) {
+            stunTime += (impactEnchantLvl * 0.33f);
+        }
+
+        var stunResistance = lEntity.getStatusEffect(StatusEffectRegistryHandler.STUN_RESISTANCE);
+        if (stunResistance != null) {
+            stunTime -= (stunResistance.getAmplifier() * 0.33f);
+        }
+
+        return stunTime;
     }
 
 
@@ -85,6 +107,13 @@ public class NCESlamServerLogic
                         .add(0, bashKnockbackHeight, 0);
 
                 livingEntity.setVelocity(finalKnockback);
+                if (server instanceof IGetTicksPerSec serverTick) {
+                    int stunTime = (int) (CalcStunTime(player, livingEntity) * serverTick.GetTicksPerSec());
+                    var statusEffectInstance = new StatusEffectInstance(
+                            StatusEffectRegistryHandler.STUN, stunTime, 0, false, true);
+                    livingEntity.addStatusEffect(statusEffectInstance);
+                }
+
                 livingEntity.damage(DamageSource.player(player), CalcDamage(player));
             }
         }

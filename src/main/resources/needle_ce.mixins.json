@@ -6,6 +6,8 @@
   "mixins": [
     "NCEAxeItemMixin",
     "NCEHoeItemMixin",
+    "NCELivingEntityMixin",
+    "NCEMinecraftServerMixin",
     "NCEOverlayMixin"
   ],
   "client": [

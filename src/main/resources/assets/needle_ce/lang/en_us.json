@@ -13,7 +13,15 @@
 
   "enchantment.needle_ce.inertia": "Inertia",
   "enchantment.needle_ce.spring_board": "Spring Board",
+  "enchantment.needle_ce.impact": "Impact",
   "enchantment.needle_ce.bash_proficiency": "Bash Proficiency",
 
-  "enchantment.needle_ce.slam_proficiency": "Slam Proficiency"
+  "enchantment.needle_ce.heavy_weight": "Heavy Weight",
+  "enchantment.needle_ce.shockwave": "Shockwave",
+  "enchantment.needle_ce.slam_proficiency": "Slam Proficiency",
+
+  "_comment03": "Status Effects",
+  "effect.needle_ce.stun": "Stun",
+  "effect.needle_ce.stun_resistance": "Stun Resistance",
+  "effect.needle_ce.stun_immunity": "Stun Immunity"
 }

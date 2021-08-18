@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(HoeItem.class)
 public abstract class NCEHoeItemMixin extends MiningToolItem
 {
-
 	protected NCEHoeItemMixin(float attackDamage, float attackSpeed, ToolMaterial material, Tag<Block> effectiveBlocks, Settings settings) {
 		super(attackDamage, attackSpeed, material, effectiveBlocks, settings);
 	}

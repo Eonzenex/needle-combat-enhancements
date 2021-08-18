@@ -2,12 +2,15 @@ package net.eonzenx.needle_ce.registry_handlers;
 
 import net.eonzenx.needle_ce.NCE;
 import net.eonzenx.needle_ce.entities.enchantments.bash.BashProficiencyEnchant;
+import net.eonzenx.needle_ce.entities.enchantments.bash.ImpactEnchant;
 import net.eonzenx.needle_ce.entities.enchantments.bash.InertiaEnchant;
 import net.eonzenx.needle_ce.entities.enchantments.bash.SpringboardEnchant;
 import net.eonzenx.needle_ce.entities.enchantments.dash.DashProficiencyEnchant;
 import net.eonzenx.needle_ce.entities.enchantments.dash.GaleBurstEnchant;
 import net.eonzenx.needle_ce.entities.enchantments.dash.QuicksilverEnchant;
 import net.eonzenx.needle_ce.entities.enchantments.dash.VaultingEnchant;
+import net.eonzenx.needle_ce.entities.enchantments.slam.HeavyWeightEnchant;
+import net.eonzenx.needle_ce.entities.enchantments.slam.ShockwaveEnchant;
 import net.eonzenx.needle_ce.entities.enchantments.slam.SlamProficiencyEnchant;
 import net.eonzenx.needle_ce.entities.enchantments.stamina.StaminaRecoveryEnchant;
 import net.minecraft.util.registry.Registry;
@@ -26,9 +29,12 @@ public class EnchantmentRegistryHandler
     // Bash enchants
     public static final InertiaEnchant INERTIA = new InertiaEnchant();
     public static final SpringboardEnchant SPRING_BOARD = new SpringboardEnchant();
+    public static final ImpactEnchant IMPACT = new ImpactEnchant();
     public static final BashProficiencyEnchant BASH_PROFICIENCY = new BashProficiencyEnchant();
 
     // Slam enchants
+    public static final HeavyWeightEnchant HEAVY_WEIGHT = new HeavyWeightEnchant();
+    public static final ShockwaveEnchant SHOCKWAVE = new ShockwaveEnchant();
     public static final SlamProficiencyEnchant SLAM_PROFICIENCY = new SlamProficiencyEnchant();
 
 
@@ -42,8 +48,11 @@ public class EnchantmentRegistryHandler
 
         Registry.register(Registry.ENCHANTMENT, NCE.newId("inertia"), INERTIA);
         Registry.register(Registry.ENCHANTMENT, NCE.newId("spring_board"), SPRING_BOARD);
+        Registry.register(Registry.ENCHANTMENT, NCE.newId("impact"), IMPACT);
         Registry.register(Registry.ENCHANTMENT, NCE.newId("bash_proficiency"), BASH_PROFICIENCY);
 
+        Registry.register(Registry.ENCHANTMENT, NCE.newId("heavy_weight"), HEAVY_WEIGHT);
+        Registry.register(Registry.ENCHANTMENT, NCE.newId("shockwave"), SHOCKWAVE);
         Registry.register(Registry.ENCHANTMENT, NCE.newId("slam_proficiency"), SLAM_PROFICIENCY);
     }
 }
