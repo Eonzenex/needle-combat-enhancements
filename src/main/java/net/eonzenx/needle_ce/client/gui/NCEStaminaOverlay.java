@@ -31,7 +31,7 @@ public class NCEStaminaOverlay extends DrawableHelper
 
         // Draw current stamina GUI
         var widthOfBar = 183f;
-        var currentStamina = staminaComponent.getCurrent();
+        var currentStamina = staminaComponent.getStamina();
         var maxStamina = StaminaConfig.MAX(player.experienceLevel);
         var scaledCurrentStamina = (currentStamina / maxStamina) * widthOfBar;
 

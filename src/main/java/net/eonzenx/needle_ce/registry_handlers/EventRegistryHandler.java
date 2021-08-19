@@ -2,7 +2,6 @@ package net.eonzenx.needle_ce.registry_handlers;
 
 
 import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
-import net.eonzenx.needle_ce.cardinal_components.slam.SlamComponent;
 import net.eonzenx.needle_ce.cardinal_components.stamina.StaminaComponent;
 import net.eonzenx.needle_ce.client.key_bindings.KeyBindings;
 import net.eonzenx.needle_ce.client.events.callbacks.BashCallback;
@@ -17,7 +16,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.util.Hand;
@@ -50,6 +48,11 @@ public class EventRegistryHandler
         return item instanceof ShieldItem || item instanceof ToolItem;
     }
 
+    private static boolean IsSlamming(PlayerEntity player) {
+        var staminaComponent = StaminaComponent.get(player);
+        return staminaComponent.isAnticipatingSlam() || staminaComponent.isSlamming();
+    }
+
 
     private static void StaminaTickEvent(MinecraftClient client) {
         if (client.isPaused()) return;
@@ -65,8 +68,7 @@ public class EventRegistryHandler
         var player = client.player;
         if (player == null) return;
 
-        var slamComponent = SlamComponent.get(player);
-        if (slamComponent.getIsAnticipatingSlam() || slamComponent.getIsSlamming()) return;
+        if (IsSlamming(player)) return;
 
         if (DASH_KEY.isPressed() && !DashThisKeyPress) {
             DashThisKeyPress = true;
@@ -84,8 +86,7 @@ public class EventRegistryHandler
         var player = client.player;
         if (player == null) return;
 
-        var slamComponent = SlamComponent.get(player);
-        if (slamComponent.getIsAnticipatingSlam() || slamComponent.getIsSlamming()) return;
+        if (IsSlamming(player)) return;
 
         var mc_options = mcClient.options;
 
@@ -114,8 +115,7 @@ public class EventRegistryHandler
         var player = client.player;
         if (player == null) return;
 
-        var slamComponent = SlamComponent.get(player);
-        if (slamComponent.getIsSlamming() || slamComponent.getIsAnticipatingSlam()) return;
+        if (IsSlamming(player)) return;
 
         var mc_options = mcClient.options;
         var SLAM_KEY_PRESSED = (mc_options.keyAttack.isPressed() && IsInstanceOfSlamItem(player.getMainHandStack().getItem()))
@@ -139,13 +139,13 @@ public class EventRegistryHandler
         var player = client.player;
         if (player == null) return;
 
-        var slamComponent = SlamComponent.get(player);
-        if (slamComponent.getIsAnticipatingSlam()) {
-            slamComponent.tick(player, mcClient.getTickDelta());
+        var staminaComponent = StaminaComponent.get(player);
+        if (staminaComponent.isAnticipatingSlam()) {
+            staminaComponent.tick(player, mcClient.getTickDelta());
         }
 
-        if (slamComponent.getIsSlamming() && player.isOnGround()) {
-            slamComponent.completeSlam(player);
+        if (staminaComponent.isSlamming() && player.isOnGround()) {
+            staminaComponent.completeSlam(player);
         }
     }
 

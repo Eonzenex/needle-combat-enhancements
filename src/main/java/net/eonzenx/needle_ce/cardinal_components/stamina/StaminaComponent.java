@@ -8,7 +8,7 @@ public interface StaminaComponent extends Component {
 
     static <T> StaminaComponent get(T provider) { return CComponentHandler.STAMINA.get(provider); }
 
-    float getCurrent();
+    float getStamina();
 
     boolean canExecuteManoeuvre(float cost);
     boolean commitManoeuvre(float cost);
@@ -17,6 +17,7 @@ public interface StaminaComponent extends Component {
     void tick(PlayerEntity player, float deltaTime);
     void tryRegenerate(PlayerEntity player, float deltaTime);
 
+    // Block
     void lockRegen();
     void unlockRegen();
     void blockRegen(float time);
@@ -24,4 +25,12 @@ public interface StaminaComponent extends Component {
     void lockManoeuvre();
     void unlockManoeuvre();
     void blockManoeuvre(float time);
+
+
+    // Slam
+    boolean isAnticipatingSlam();
+    boolean isSlamming();
+    void startAnticipatingSlam(float newTimer);
+    void completeSlam(PlayerEntity player);
+    void anticipateSlamTick(PlayerEntity player, float deltaTime);
 }

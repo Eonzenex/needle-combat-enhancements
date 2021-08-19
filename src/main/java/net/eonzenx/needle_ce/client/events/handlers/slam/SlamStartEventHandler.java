@@ -1,7 +1,6 @@
 package net.eonzenx.needle_ce.client.events.handlers.slam;
 
 import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
-import net.eonzenx.needle_ce.cardinal_components.slam.SlamComponent;
 import net.eonzenx.needle_ce.cardinal_components.stamina.StaminaComponent;
 import net.eonzenx.needle_ce.client.events.callbacks.slam.SlamStartAnticipationCallback;
 import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
@@ -41,8 +40,8 @@ public class SlamStartEventHandler
                 if (!stamina.commitManoeuvre(CalcSlamCost(player))) return ActionResult.FAIL;
             }
 
-            var anticipatingSlamComponent = SlamComponent.get(player);
-            anticipatingSlamComponent.set(StaminaConfig.Slam.ANTICIPATION_TIME);
+            var staminaComponent = StaminaComponent.get(player);
+            staminaComponent.startAnticipatingSlam(StaminaConfig.Slam.ANTICIPATION_TIME);
 
             var yCap = 0.1f;
             var playerVelocity = player.getVelocity();

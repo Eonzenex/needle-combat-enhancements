@@ -8,7 +8,8 @@ public class StaminaConfig
     public static final float MIN_LEVEL = 10f;
     public static float MAX(int level) {return MIN_LEVEL + level * 5f;}
     public static final float BASE_REGEN_RATE = 2.5f;
-    public static final float MANOEUVRE_BLOCK_REGEN_TIME = 3f;
+    public static final float MANOEUVRE_BLOCK_REGEN_TIME = 2.5f;
+    public static final float HIT_BLOCK_REGEN_TIME = 5f;
 
     // Dash
     public static final class Dash {
