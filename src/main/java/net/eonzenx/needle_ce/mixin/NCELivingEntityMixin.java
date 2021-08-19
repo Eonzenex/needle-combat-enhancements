@@ -1,6 +1,11 @@
 package net.eonzenx.needle_ce.mixin;
 
+import net.eonzenx.needle_ce.cardinal_components.stamina.SimpleStaminaComponent;
+import net.eonzenx.needle_ce.cardinal_components.stamina.StaminaComponent;
+import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
 import net.eonzenx.needle_ce.registry_handlers.StatusEffectRegistryHandler;
+import net.eonzenx.needle_ce.utils.mixin.ICollidesWith;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -12,10 +17,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
-public abstract class NCELivingEntityMixin extends Entity
+public abstract class NCELivingEntityMixin extends Entity implements ICollidesWith
 {
     public NCELivingEntityMixin(EntityType<?> type, World world) {
         super(type, world);
@@ -28,6 +34,11 @@ public abstract class NCELivingEntityMixin extends Entity
     @Shadow private float movementSpeed;
 
     @Shadow public abstract boolean removeStatusEffect(StatusEffect type);
+
+
+    @Nullable
+    protected SimpleStaminaComponent simpleStaminaComponent;
+
 
     private float originalGetMovementSpeed(float slipperiness, boolean onGround, float movementSpeed, float flyingSpeed) {
         return onGround ? movementSpeed * (0.21600002F / (slipperiness * slipperiness * slipperiness)) : flyingSpeed;
@@ -59,5 +70,36 @@ public abstract class NCELivingEntityMixin extends Entity
         }
 
         cir.setReturnValue(correctMovementSpeed);
+    }
+
+
+    @Inject(method = "setOnGround", at = @At("HEAD"))
+    private void setOnGround(boolean onGround, CallbackInfo ci) {
+        if (simpleStaminaComponent == null) simpleStaminaComponent = SimpleStaminaComponent.get(this);
+
+        if (simpleStaminaComponent.hasBeenDominoed()) {
+            simpleStaminaComponent.dominoer(null);
+        }
+    }
+
+    @Override
+    public boolean collidesWith(Entity other) {
+        var correctCollidesWith = super.collidesWith(other);
+        if (correctCollidesWith) {
+            if (other instanceof LivingEntity lOther) {
+                if (simpleStaminaComponent == null) simpleStaminaComponent = SimpleStaminaComponent.get(this);
+                var lOtherStamina = SimpleStaminaComponent.get(lOther);
+
+                if (lOtherStamina.hasBeenDominoed()) {
+                    simpleStaminaComponent.dominoer(lOther);
+                }
+
+                if (simpleStaminaComponent.hasBeenDominoed()) {
+                    lOtherStamina.dominoer((LivingEntity) (Object) this);
+                }
+            }
+        }
+
+        return correctCollidesWith;
     }
 }

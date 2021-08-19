@@ -7,14 +7,19 @@ import net.eonzenx.needle_ce.client.events.callbacks.slam.SlamContactGroundCallb
 import net.eonzenx.needle_ce.client.events.callbacks.slam.SlamStartFallCallback;
 import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import org.jetbrains.annotations.Nullable;
 
+// TODO: Investigate ServerTickingComponent
 public class SyncedStaminaComponent implements StaminaComponent, AutoSyncedComponent
 {
 //    Auto sync
 //    https://github.com/OnyxStudios/Cardinal-Components-API/wiki/Synchronizing-components
 
+    private final Entity provider;
     private float stamina;
 
     // Block
@@ -30,6 +35,14 @@ public class SyncedStaminaComponent implements StaminaComponent, AutoSyncedCompo
     private boolean isAnticipatingSlam;
     private boolean isSlamming;
     private float anticipateSlamTimer;
+
+    // Dominoes
+    private LivingEntity dominoer;
+
+
+    public SyncedStaminaComponent(Entity provider) {
+        this.provider = provider;
+    }
 
 
     @Override
@@ -137,6 +150,7 @@ public class SyncedStaminaComponent implements StaminaComponent, AutoSyncedCompo
 
 
 
+    // Slam
     @Override
     public boolean isAnticipatingSlam()  { return isAnticipatingSlam; }
 
@@ -173,14 +187,56 @@ public class SyncedStaminaComponent implements StaminaComponent, AutoSyncedCompo
     }
 
 
+    // Dominoes
+    @Override
+    public boolean hasBeenDominoed() { return dominoer != null; }
 
+    @Override
+    @Nullable
+    public LivingEntity dominoer() { return dominoer; }
+
+    @Override
+    public void dominoer(LivingEntity newDominoer) {
+        dominoer = newDominoer;
+        if (provider instanceof LivingEntity lEntity) {
+            var velocity = newDominoer.getVelocity();
+            lEntity.takeKnockback(velocity.length(), velocity.x, velocity.z);
+        }
+    }
+
+
+    // Required
     @Override
     public void readFromNbt(NbtCompound tag) {
         stamina = tag.getFloat("stamina");
+
+        regenLocked = tag.getBoolean("regen_locked");
+        regenBlocked = tag.getBoolean("regen_blocked");
+        regenBlockTime = tag.getFloat("regen_block_time");
+
+        manoeuvreLocked = tag.getBoolean("manoeuvre_locked");
+        manoeuvreBlocked = tag.getBoolean("manoeuvre_blocked");
+        manoeuvreBlockTime = tag.getFloat("manoeuvre_block_time");
+
+        isAnticipatingSlam = tag.getBoolean("is_anticipating_slam");
+        isSlamming = tag.getBoolean("is_slamming");
+        anticipateSlamTimer = tag.getFloat("anticipate_slam_timer");
     }
 
     @Override
     public void writeToNbt(NbtCompound tag) {
         tag.putFloat("stamina", stamina);
+
+        tag.putBoolean("regen_locked", regenLocked);
+        tag.putBoolean("regen_blocked", regenBlocked);
+        tag.putFloat("regen_block_time", regenBlockTime);
+
+        tag.putBoolean("manoeuvre_locked", manoeuvreLocked);
+        tag.putBoolean("manoeuvre_blocked", manoeuvreBlocked);
+        tag.putFloat("manoeuvre_block_time", manoeuvreBlockTime);
+
+        tag.putBoolean("is_anticipating_slam", isAnticipatingSlam);
+        tag.putBoolean("is_slamming", isSlamming);
+        tag.putFloat("anticipate_slam_timer", anticipateSlamTimer);
     }
 }

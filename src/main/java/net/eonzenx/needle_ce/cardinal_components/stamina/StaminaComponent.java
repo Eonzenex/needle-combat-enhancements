@@ -4,9 +4,11 @@ import dev.onyxstudios.cca.api.v3.component.Component;
 import net.eonzenx.needle_ce.cardinal_components.CComponentHandler;
 import net.minecraft.entity.player.PlayerEntity;
 
-public interface StaminaComponent extends Component {
+public interface StaminaComponent extends Component, SimpleStaminaComponent {
 
-    static <T> StaminaComponent get(T provider) { return CComponentHandler.STAMINA.get(provider); }
+    static <T> StaminaComponent get(T provider) {
+        return CComponentHandler.STAMINA.get(provider);
+    }
 
     float getStamina();
 

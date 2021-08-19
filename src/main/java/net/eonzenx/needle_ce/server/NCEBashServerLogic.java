@@ -1,6 +1,8 @@
 package net.eonzenx.needle_ce.server;
 
 import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
+import net.eonzenx.needle_ce.cardinal_components.stamina.SimpleStaminaComponent;
+import net.eonzenx.needle_ce.cardinal_components.stamina.StaminaComponent;
 import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
 import net.eonzenx.needle_ce.registry_handlers.StatusEffectRegistryHandler;
 import net.eonzenx.needle_ce.utils.mixin.IGetTicksPerSec;
@@ -51,6 +53,11 @@ public class NCEBashServerLogic
         return bashHeight;
     }
 
+    private static boolean CalcCanDomino(PlayerEntity player) {
+        int bashDominoEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.DOMINO, player);
+        return bashDominoEnchantLvl > 0;
+    }
+
     private static float CalcStunTime(PlayerEntity player, LivingEntity lEntity) {
         // Calculate stun time
         var stunImmunity = lEntity.getStatusEffect(StatusEffectRegistryHandler.STUN_IMMUNITY);
@@ -80,6 +87,7 @@ public class NCEBashServerLogic
         var bashKnockbackForce = CalcKnockbackForce(player);
         var bashKnockbackHeight = CalcKnockbackHeight(player);
         var bashDamage = CalcKnockbackDamage(player);
+        var bashDomino = CalcCanDomino(player);
 
         for (var livingEntityId: livingEntityIds) {
             if (server.getOverworld().getEntityById(livingEntityId) instanceof LivingEntity livingEntity) {
@@ -98,6 +106,11 @@ public class NCEBashServerLogic
                 }
 
                 if (bashDamage > 0f) livingEntity.damage(DamageSource.player(player), bashDamage);
+
+                if (bashDomino) {
+                    var livingEntityStaminaComponent = SimpleStaminaComponent.get(livingEntity);
+                    livingEntityStaminaComponent.dominoer(player);
+                }
             }
         }
     }

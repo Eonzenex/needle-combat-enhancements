@@ -1,10 +1,7 @@
 package net.eonzenx.needle_ce.registry_handlers;
 
 import net.eonzenx.needle_ce.NCE;
-import net.eonzenx.needle_ce.entities.enchantments.bash.BashProficiencyEnchant;
-import net.eonzenx.needle_ce.entities.enchantments.bash.ImpactEnchant;
-import net.eonzenx.needle_ce.entities.enchantments.bash.InertiaEnchant;
-import net.eonzenx.needle_ce.entities.enchantments.bash.SpringboardEnchant;
+import net.eonzenx.needle_ce.entities.enchantments.bash.*;
 import net.eonzenx.needle_ce.entities.enchantments.dash.DashProficiencyEnchant;
 import net.eonzenx.needle_ce.entities.enchantments.dash.GaleBurstEnchant;
 import net.eonzenx.needle_ce.entities.enchantments.dash.QuicksilverEnchant;
@@ -30,6 +27,7 @@ public class EnchantmentRegistryHandler
     public static final InertiaEnchant INERTIA = new InertiaEnchant();
     public static final SpringboardEnchant SPRING_BOARD = new SpringboardEnchant();
     public static final ImpactEnchant IMPACT = new ImpactEnchant();
+    public static final DominoEnchant DOMINO = new DominoEnchant();
     public static final BashProficiencyEnchant BASH_PROFICIENCY = new BashProficiencyEnchant();
 
     // Slam enchants
@@ -49,6 +47,7 @@ public class EnchantmentRegistryHandler
         Registry.register(Registry.ENCHANTMENT, NCE.newId("inertia"), INERTIA);
         Registry.register(Registry.ENCHANTMENT, NCE.newId("spring_board"), SPRING_BOARD);
         Registry.register(Registry.ENCHANTMENT, NCE.newId("impact"), IMPACT);
+        Registry.register(Registry.ENCHANTMENT, NCE.newId("domino"), DOMINO);
         Registry.register(Registry.ENCHANTMENT, NCE.newId("bash_proficiency"), BASH_PROFICIENCY);
 
         Registry.register(Registry.ENCHANTMENT, NCE.newId("heavy_weight"), HEAVY_WEIGHT);
