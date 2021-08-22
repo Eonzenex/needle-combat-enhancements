@@ -28,9 +28,7 @@ public class EventRegistryHandler
 
     private static KeyBinding DASH_KEY;
     private static boolean DashThisKeyPress = false;
-
     private static boolean BashThisKeyPress = false;
-
     private static boolean SlamThisKeyPress = false;
 
 
@@ -41,7 +39,10 @@ public class EventRegistryHandler
         var hitResult = player.getEntityWorld().raycast(cxt);
         if (hitResult.getType() != HitResult.Type.MISS) return false;
 
-        return player.getPitch() > StaminaConfig.Slam.MAX_ANGLE && !player.isOnGround() && !player.getAbilities().flying;
+        return player.getPitch() > StaminaConfig.Slam.MAX_ANGLE
+                && !player.isOnGround()
+                && !player.isSwimming()
+                && !player.getAbilities().flying;
     }
 
     private static boolean IsInstanceOfSlamItem(Item item) {
