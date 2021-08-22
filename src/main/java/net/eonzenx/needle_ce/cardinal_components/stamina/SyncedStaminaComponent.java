@@ -72,7 +72,7 @@ public class SyncedStaminaComponent implements StaminaComponent, AutoSyncedCompo
     }
 
     private void regenerate(PlayerEntity player, float deltaTime) {
-        var regenAmount = StaminaConfig.BASE_REGEN_RATE;
+        var regenAmount = StaminaConfig.REGEN_RATE(player.experienceLevel);
         var staminaRegenEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.STAMINA_RECOVERY, player);
         if (staminaRegenEnchantLvl > 0) {
             regenAmount += staminaRegenEnchantLvl * 0.25f;
@@ -99,8 +99,10 @@ public class SyncedStaminaComponent implements StaminaComponent, AutoSyncedCompo
         if (regenBlockTime - deltaTime < 0f) {
             regenBlockTime = 0f;
             regenBlocked = false;
+            return;
         }
-        else regenBlockTime -= deltaTime;
+
+        regenBlockTime -= deltaTime;
     }
 
     private void blockManoeuvreTick(float deltaTime) {

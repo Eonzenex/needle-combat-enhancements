@@ -41,7 +41,7 @@ public class EventRegistryHandler
         var hitResult = player.getEntityWorld().raycast(cxt);
         if (hitResult.getType() != HitResult.Type.MISS) return false;
 
-        return player.getPitch() > StaminaConfig.Slam.MAX_ANGLE;
+        return player.getPitch() > StaminaConfig.Slam.MAX_ANGLE && !player.isOnGround() && !player.getAbilities().flying;
     }
 
     private static boolean IsInstanceOfSlamItem(Item item) {
@@ -59,7 +59,7 @@ public class EventRegistryHandler
         var player = client.player;
         if (player == null) return;
 
-        StaminaComponent stamina = StaminaComponent.get(player);
+        var stamina = StaminaComponent.get(player);
         stamina.tick(player, mcClient.getTickDelta());
     }
 
@@ -140,10 +140,6 @@ public class EventRegistryHandler
         if (player == null) return;
 
         var staminaComponent = StaminaComponent.get(player);
-        if (staminaComponent.isAnticipatingSlam()) {
-            staminaComponent.tick(player, mcClient.getTickDelta());
-        }
-
         if (staminaComponent.isSlamming() && player.isOnGround()) {
             staminaComponent.completeSlam(player);
         }

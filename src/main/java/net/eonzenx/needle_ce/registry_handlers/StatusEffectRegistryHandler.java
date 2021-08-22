@@ -10,13 +10,20 @@ import net.minecraft.util.registry.Registry;
 
 public class StatusEffectRegistryHandler
 {
-    public static final StatusEffect STUN = new NCEStunEffect();
-    public static final StatusEffect STUN_RESISTANCE = new NCEStunResistanceEffect();
-    public static final StatusEffect STUN_IMMUNITY = new NCEStunImmunityEffect();
+    public static final StatusEffect STUN;
+    public static final StatusEffect STUN_RESISTANCE;
+    public static final StatusEffect STUN_IMMUNITY;
 
     public static void init() {
         Registry.register(Registry.STATUS_EFFECT, NCE.newId("stun"), STUN);
         Registry.register(Registry.STATUS_EFFECT, NCE.newId("stun_resistance"), STUN_RESISTANCE);
         Registry.register(Registry.STATUS_EFFECT, NCE.newId("stun_immunity"), STUN_IMMUNITY);
+    }
+
+
+    static {
+        STUN = new NCEStunEffect();
+        STUN_RESISTANCE = new NCEStunResistanceEffect();
+        STUN_IMMUNITY = new NCEStunImmunityEffect();
     }
 }

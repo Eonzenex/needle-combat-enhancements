@@ -6,10 +6,11 @@ import net.minecraft.sound.SoundEvents;
 public class StaminaConfig
 {
     public static final float MIN_LEVEL = 10f;
-    public static float MAX(int level) {return MIN_LEVEL + level * 5f;}
+    public static float MAX(int level) {return MIN_LEVEL + level * 2.5f;}
     public static final float BASE_REGEN_RATE = 2.5f;
+    public static float REGEN_RATE(int level) {return BASE_REGEN_RATE + level * 0.5f;}
     public static final float MANOEUVRE_BLOCK_REGEN_TIME = 2.5f;
-    public static final float HIT_BLOCK_REGEN_TIME = 5f;
+    public static final float HIT_BLOCK_REGEN_TIME = MANOEUVRE_BLOCK_REGEN_TIME * 1.6f;
 
     // Dash
     public static final class Dash {
