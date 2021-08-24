@@ -15,10 +15,16 @@ public abstract class NCEPlayerMixin
 {
     @Shadow public abstract boolean isInvulnerableTo(DamageSource source);
 
-    @Inject(method = "applyDamage", at = @At("HEAD"))
+    @Inject(method = "applyDamage", at = @At("HEAD"), cancellable = true)
     public void onHit(DamageSource source, float amount, CallbackInfo ci) {
         if (!this.isInvulnerableTo(source)) {
             var stamina = IFullStamina.get(this);
+
+            if (stamina.isSlamming() && source.isFromFalling()) {
+                ci.cancel();
+                return;
+            }
+
             stamina.blockRegen(StaminaConfig.HIT_BLOCK_REGEN_TIME, true);
         }
     }
