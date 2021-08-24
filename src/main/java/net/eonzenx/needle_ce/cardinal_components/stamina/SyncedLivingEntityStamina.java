@@ -2,20 +2,12 @@ package net.eonzenx.needle_ce.cardinal_components.stamina;
 
 
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
-import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
-import net.eonzenx.needle_ce.client.events.callbacks.slam.SlamContactGroundCallback;
-import net.eonzenx.needle_ce.client.events.callbacks.slam.SlamStartFallCallback;
-import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.Nullable;
 
-public class SyncedSimpleStaminaComponent implements SimpleStaminaComponent, AutoSyncedComponent
+public class SyncedLivingEntityStamina implements BaseStamina, AutoSyncedComponent
 {
 //    Auto sync
 //    https://github.com/OnyxStudios/Cardinal-Components-API/wiki/Synchronizing-components
@@ -26,7 +18,7 @@ public class SyncedSimpleStaminaComponent implements SimpleStaminaComponent, Aut
     private LivingEntity dominoer;
 
 
-    public SyncedSimpleStaminaComponent(Entity provider) {
+    public SyncedLivingEntityStamina(Entity provider) {
         this.provider = provider;
     }
 

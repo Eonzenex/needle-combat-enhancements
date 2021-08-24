@@ -1,10 +1,9 @@
 package net.eonzenx.needle_ce.cardinal_components.stamina.specific;
 
-import net.eonzenx.needle_ce.cardinal_components.stamina.SyncedSimpleStaminaComponent;
-import net.eonzenx.needle_ce.cardinal_components.stamina.SyncedStaminaComponent;
+import net.eonzenx.needle_ce.cardinal_components.stamina.SyncedLivingEntityStamina;
 import net.minecraft.entity.LivingEntity;
 
-public class LivingEntitySimpleStamina extends SyncedSimpleStaminaComponent
+public class LivingEntitySimpleStamina extends SyncedLivingEntityStamina
 {
     protected LivingEntity owner;
 

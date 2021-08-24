@@ -1,7 +1,7 @@
 package net.eonzenx.needle_ce.client.gui;
 
 import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
-import net.eonzenx.needle_ce.cardinal_components.stamina.StaminaComponent;
+import net.eonzenx.needle_ce.cardinal_components.stamina.IFullStamina;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
@@ -13,7 +13,7 @@ public class NCEStaminaOverlay extends DrawableHelper
 
         var player = mcInstance.player;
         if (player == null) return;
-        var staminaComponent = StaminaComponent.get(player);
+        var staminaComponent = IFullStamina.get(player);
 
         var mainWindow = mcInstance.getWindow();
         int scaledWidth = mainWindow.getScaledWidth();

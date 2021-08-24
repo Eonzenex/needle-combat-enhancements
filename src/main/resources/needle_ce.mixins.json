@@ -4,12 +4,13 @@
   "package": "net.eonzenx.needle_ce.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "NCEAxeItemMixin",
-    "NCEEntityMixin",
-    "NCEHoeItemMixin",
-    "NCELivingEntityMixin",
+    "items.NCEAxeItemMixin",
+    "items.NCEEntityMixin",
+    "items.NCEHoeItemMixin",
+    "entities.NCELivingEntityMixin",
     "NCEMinecraftServerMixin",
-    "NCEOverlayMixin"
+    "NCEOverlayMixin",
+    "entities.NCEPlayerMixin"
   ],
   "client": [
     "NCEMixin"

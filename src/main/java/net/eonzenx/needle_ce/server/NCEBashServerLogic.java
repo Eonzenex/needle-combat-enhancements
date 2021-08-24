@@ -1,8 +1,7 @@
 package net.eonzenx.needle_ce.server;
 
 import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
-import net.eonzenx.needle_ce.cardinal_components.stamina.SimpleStaminaComponent;
-import net.eonzenx.needle_ce.cardinal_components.stamina.StaminaComponent;
+import net.eonzenx.needle_ce.cardinal_components.stamina.BaseStamina;
 import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
 import net.eonzenx.needle_ce.registry_handlers.StatusEffectRegistryHandler;
 import net.eonzenx.needle_ce.utils.mixin.IGetTicksPerSec;
@@ -108,7 +107,7 @@ public class NCEBashServerLogic
                 if (bashDamage > 0f) livingEntity.damage(DamageSource.player(player), bashDamage);
 
                 if (bashDomino) {
-                    var livingEntityStaminaComponent = SimpleStaminaComponent.get(livingEntity);
+                    var livingEntityStaminaComponent = BaseStamina.get(livingEntity);
                     livingEntityStaminaComponent.dominoer(player);
                 }
             }

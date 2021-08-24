@@ -15,4 +15,9 @@ public abstract class NCEMinecraftServerMixin implements IGetTicksPerSec
     public float GetTicksPerSec() {
         return (float) (1000 / MILLISECONDS_PER_TICK);
     }
+
+    @Override
+    public long GetMillisecondsPerTick() {
+        return MILLISECONDS_PER_TICK;
+    }
 }

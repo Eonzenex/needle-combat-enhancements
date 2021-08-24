@@ -2,22 +2,24 @@ package net.eonzenx.needle_ce.registry_handlers;
 
 
 import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
-import net.eonzenx.needle_ce.cardinal_components.stamina.StaminaComponent;
+import net.eonzenx.needle_ce.cardinal_components.stamina.IFullStamina;
+import net.eonzenx.needle_ce.client.events.callbacks.slam.SlamContactGroundCallback;
+import net.eonzenx.needle_ce.client.events.handlers.DashHandler;
+import net.eonzenx.needle_ce.client.events.handlers.SlamHandler;
 import net.eonzenx.needle_ce.client.key_bindings.KeyBindings;
 import net.eonzenx.needle_ce.client.events.callbacks.BashCallback;
 import net.eonzenx.needle_ce.client.events.callbacks.DashCallback;
 import net.eonzenx.needle_ce.client.events.callbacks.slam.SlamStartAnticipationCallback;
-import net.eonzenx.needle_ce.client.events.handlers.BashEventHandler;
-import net.eonzenx.needle_ce.client.events.handlers.DashEventHandler;
-import net.eonzenx.needle_ce.client.events.handlers.slam.SlamContactGroundEventHandler;
-import net.eonzenx.needle_ce.client.events.handlers.slam.SlamStartEventHandler;
-import net.eonzenx.needle_ce.client.events.handlers.slam.SlamFallEventHandler;
+import net.eonzenx.needle_ce.client.events.handlers.BashHandler;
+import net.eonzenx.needle_ce.utils.mixin.IGetTicksPerSec;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.RaycastContext;
@@ -30,6 +32,9 @@ public class EventRegistryHandler
     private static boolean DashThisKeyPress = false;
     private static boolean BashThisKeyPress = false;
     private static boolean SlamThisKeyPress = false;
+
+    // 1 second / 20 ticks = 0.05f;
+    private static float secondsPerTick = 0.05f;
 
 
     private static boolean IsTryingToSlam(PlayerEntity player) {
@@ -50,19 +55,31 @@ public class EventRegistryHandler
     }
 
     private static boolean IsSlamming(PlayerEntity player) {
-        var staminaComponent = StaminaComponent.get(player);
+        var staminaComponent = IFullStamina.get(player);
         return staminaComponent.isAnticipatingSlam() || staminaComponent.isSlamming();
     }
 
 
-    private static void StaminaTickEvent(MinecraftClient client) {
+    private static void StaminaServerTickEvent(MinecraftServer server) {
+        if (server instanceof IGetTicksPerSec iServer) {
+            secondsPerTick = (float) iServer.GetMillisecondsPerTick() / 1000;
+        }
+
+        for (var player: server.getPlayerManager().getPlayerList()) {
+            var stamina = IFullStamina.get((PlayerEntity) player);
+            stamina.tick(secondsPerTick);
+        }
+    }
+
+    private static void StaminaClientTickEvent(MinecraftClient client) {
         if (client.isPaused()) return;
         var player = client.player;
         if (player == null) return;
 
-        var stamina = StaminaComponent.get(player);
-        stamina.tick(player, mcClient.getTickDelta());
+        var stamina = IFullStamina.get((PlayerEntity) player);
+        stamina.tick(secondsPerTick);
     }
+
 
     private static void DashTriggerEvent(MinecraftClient client) {
         if (client.isPaused()) return;
@@ -135,14 +152,14 @@ public class EventRegistryHandler
         }
     }
 
-    private static void SlamTickEvent(MinecraftClient client) {
+    private static void SlamClientTickEvent(MinecraftClient client) {
         if (client.isPaused()) return;
         var player = client.player;
         if (player == null) return;
 
-        var staminaComponent = StaminaComponent.get(player);
-        if (staminaComponent.isSlamming() && player.isOnGround()) {
-            staminaComponent.completeSlam(player);
+        var stamina = IFullStamina.get(player);
+        if (stamina.isSlamming() && player.isOnGround()) {
+            SlamContactGroundCallback.EVENT.invoker().hitGround(player);
         }
     }
 
@@ -151,15 +168,13 @@ public class EventRegistryHandler
         mcClient = MinecraftClient.getInstance();
         DASH_KEY = KeyBindingHelper.registerKeyBinding(KeyBindings.DASH);
 
-        DashEventHandler.init();
-        BashEventHandler.init();
-
-        SlamStartEventHandler.init();
-        SlamFallEventHandler.init();
-        SlamContactGroundEventHandler.init();
+        DashHandler.init();
+        BashHandler.init();
+        SlamHandler.init();
 
         // Stamina tick event
-        ClientTickEvents.END_CLIENT_TICK.register(EventRegistryHandler::StaminaTickEvent);
+        ServerTickEvents.END_SERVER_TICK.register(EventRegistryHandler::StaminaServerTickEvent);
+        ClientTickEvents.END_CLIENT_TICK.register(EventRegistryHandler::StaminaClientTickEvent);
 
         // Dash trigger event
         ClientTickEvents.END_CLIENT_TICK.register(EventRegistryHandler::DashTriggerEvent);
@@ -169,6 +184,6 @@ public class EventRegistryHandler
 
         // Slam trigger event
         ClientTickEvents.END_CLIENT_TICK.register(EventRegistryHandler::StartSlamTriggerEvent);
-        ClientTickEvents.END_CLIENT_TICK.register(EventRegistryHandler::SlamTickEvent);
+        ClientTickEvents.END_CLIENT_TICK.register(EventRegistryHandler::SlamClientTickEvent);
     }
 }
