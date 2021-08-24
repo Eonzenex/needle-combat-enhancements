@@ -1,6 +1,7 @@
 package net.eonzenx.needle_ce.server;
 
 import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
+import net.eonzenx.needle_ce.cardinal_components.stamina.IFullStamina;
 import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
 import net.eonzenx.needle_ce.registry_handlers.StatusEffectRegistryHandler;
 import net.eonzenx.needle_ce.utils.mixin.IGetTicksPerSec;
@@ -17,7 +18,6 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.Vec3d;
 
 public class NCESlamServerLogic
 {
@@ -61,39 +61,40 @@ public class NCESlamServerLogic
 
 
     private static double RandBetween() {
-        return (Math.random() - 0.5) * 3;
+        return (Math.random() - 0.5);
     }
 
     private static void SpawnImpactParticles(PlayerEntity player, ParticleEffect type, int count) {
         var pos = player.getPos();
 
         ((ServerWorld) player.getEntityWorld())
-                .spawnParticles(
-                        type,
-                        pos.x, pos.y, pos.z,
-                        count,
-                        RandBetween(), (Math.random() / 2) + 0.1, RandBetween(),
-                        5f);
+                .spawnParticles(type,
+                        pos.x, pos.y, pos.z, count,
+                        0, 0, 0,
+                        1f);
     }
 
 
     public static void execute(MinecraftServer server, PlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-        var livingEntityIds = buf.readIntArray();
-        var posX = buf.readDouble();
-        var posY = buf.readDouble();
-        var posZ = buf.readDouble();
+        SpawnImpactParticles(player, ParticleTypes.CRIT, 100);
 
-        var clientPlayerPos = new Vec3d(posX, posY, posZ);
+        var stamina = IFullStamina.get(player);
+        stamina.completeSlam();
+
+        if (!buf.readBoolean()) return;
+
+        var playerWorldKey = player.getEntityWorld().getRegistryKey();
+        var playerWorld = server.getWorld(playerWorldKey);
+        if (playerWorld == null) return;
+
+        var livingEntityIds = buf.readIntArray();
         var playerPos = player.getPos();
-        if (playerPos.distanceTo(clientPlayerPos) < StaminaConfig.Slam.Hitbox.MAX_DISTANCE) {
-            playerPos = clientPlayerPos;
-        }
 
         var bashKnockbackForce = CalcKnockbackForce(player);
         var bashKnockbackHeight = CalcKnockbackHeight(player);
 
         for (var livingEntityId: livingEntityIds) {
-            if (server.getOverworld().getEntityById(livingEntityId) instanceof LivingEntity livingEntity) {
+            if (playerWorld.getEntityById(livingEntityId) instanceof LivingEntity livingEntity) {
                 var entityPos = livingEntity.getPos();
 
                 var distance = playerPos.distanceTo(entityPos);
@@ -118,6 +119,6 @@ public class NCESlamServerLogic
             }
         }
 
-        SpawnImpactParticles(player, new BlockStateParticleEffect(ParticleTypes.BLOCK, player.getBlockStateAtPos()), 200);
+        SpawnImpactParticles(player, ParticleTypes.CRIT, 100);
     }
 }

@@ -5,13 +5,13 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ActionResult;
 
-public interface SlamStartAnticipationCallback
+public interface SlamStartFastFallCallback
 {
-    Event<SlamStartAnticipationCallback> EVENT = EventFactory.createArrayBacked(
-            SlamStartAnticipationCallback.class,
+    Event<SlamStartFastFallCallback> EVENT = EventFactory.createArrayBacked(
+            SlamStartFastFallCallback.class,
             (listeners) -> (livingEntity) -> {
-                for (SlamStartAnticipationCallback listener : listeners) {
-                    ActionResult result = listener.startAnticipation(livingEntity);
+                for (SlamStartFastFallCallback listener : listeners) {
+                    ActionResult result = listener.startFastFall(livingEntity);
 
                     if(result != ActionResult.PASS) {
                         return result;
@@ -22,5 +22,5 @@ public interface SlamStartAnticipationCallback
             }
     );
 
-    ActionResult startAnticipation(LivingEntity livingEntity);
+    ActionResult startFastFall(LivingEntity livingEntity);
 }

@@ -14,6 +14,7 @@
   "enchantment.needle_ce.inertia": "Inertia",
   "enchantment.needle_ce.spring_board": "Spring Board",
   "enchantment.needle_ce.impact": "Impact",
+  "enchantment.needle_ce.domino": "Domino",
   "enchantment.needle_ce.bash_proficiency": "Bash Proficiency",
 
   "enchantment.needle_ce.heavy_weight": "Heavy Weight",
@@ -23,5 +24,18 @@
   "_comment03": "Status Effects",
   "effect.needle_ce.stun": "Stun",
   "effect.needle_ce.stun_resistance": "Stun Resistance",
-  "effect.needle_ce.stun_immunity": "Stun Immunity"
+  "effect.needle_ce.stun_immunity": "Stun Immunity",
+
+  "_comment04": "Potions",
+  "item.minecraft.potion.effect.stun": "Potion of Stun",
+  "item.minecraft.potion.effect.stun_resistance": "Potion of Stun Resistance",
+  "item.minecraft.potion.effect.stun_immunity": "Potion of Stun Immunity",
+
+  "item.minecraft.splash_potion.effect.stun": "Splash Potion of Stun",
+  "item.minecraft.splash_potion.effect.stun_resistance": "Splash Potion of Stun Resistance",
+  "item.minecraft.splash_potion.effect.stun_immunity": "Splash Potion of Stun Immunity",
+
+  "item.minecraft.lingering_potion.effect.stun": "Lingering Potion of Stun",
+  "item.minecraft.lingering_potion.effect.stun_resistance": "Lingering Potion of Stun Resistance",
+  "item.minecraft.lingering_potion.effect.stun_immunity": "Lingering Potion of Stun Immunity"
 }

@@ -1,4 +1,4 @@
-package net.eonzenx.needle_ce.mixin;
+package net.eonzenx.needle_ce.mixin.items;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EquipmentSlot;

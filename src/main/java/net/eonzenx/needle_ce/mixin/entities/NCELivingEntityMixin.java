@@ -1,6 +1,8 @@
-package net.eonzenx.needle_ce.mixin;
+package net.eonzenx.needle_ce.mixin.entities;
 
+import net.eonzenx.needle_ce.cardinal_components.stamina.BaseStamina;
 import net.eonzenx.needle_ce.registry_handlers.StatusEffectRegistryHandler;
+import net.eonzenx.needle_ce.utils.mixin.ICollidesWith;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -12,10 +14,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
-public abstract class NCELivingEntityMixin extends Entity
+public abstract class NCELivingEntityMixin extends Entity implements ICollidesWith
 {
     public NCELivingEntityMixin(EntityType<?> type, World world) {
         super(type, world);
@@ -28,6 +31,11 @@ public abstract class NCELivingEntityMixin extends Entity
     @Shadow private float movementSpeed;
 
     @Shadow public abstract boolean removeStatusEffect(StatusEffect type);
+
+
+    @Nullable
+    protected BaseStamina baseStamina;
+
 
     private float originalGetMovementSpeed(float slipperiness, boolean onGround, float movementSpeed, float flyingSpeed) {
         return onGround ? movementSpeed * (0.21600002F / (slipperiness * slipperiness * slipperiness)) : flyingSpeed;
@@ -59,5 +67,15 @@ public abstract class NCELivingEntityMixin extends Entity
         }
 
         cir.setReturnValue(correctMovementSpeed);
+    }
+
+
+    @Inject(method = "setOnGround", at = @At("HEAD"))
+    private void setOnGround(boolean onGround, CallbackInfo ci) {
+        if (baseStamina == null) baseStamina = BaseStamina.get(this);
+
+        if (baseStamina.hasBeenDominoed()) {
+            baseStamina.dominoer(null);
+        }
     }
 }

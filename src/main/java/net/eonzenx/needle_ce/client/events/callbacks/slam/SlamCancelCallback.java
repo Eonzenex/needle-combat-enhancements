@@ -1,17 +1,17 @@
-package net.eonzenx.needle_ce.client.events.callbacks;
+package net.eonzenx.needle_ce.client.events.callbacks.slam;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ActionResult;
 
-public interface BashCallback
+public interface SlamCancelCallback
 {
-    Event<BashCallback> EVENT = EventFactory.createArrayBacked(
-            BashCallback.class,
+    Event<SlamCancelCallback> EVENT = EventFactory.createArrayBacked(
+            SlamCancelCallback.class,
             (listeners) -> (livingEntity) -> {
-                for (BashCallback listener : listeners) {
-                    ActionResult result = listener.bash(livingEntity);
+                for (SlamCancelCallback listener : listeners) {
+                    ActionResult result = listener.cancel(livingEntity);
 
                     if(result != ActionResult.PASS) {
                         return result;
@@ -22,5 +22,5 @@ public interface BashCallback
             }
     );
 
-    ActionResult bash(LivingEntity livingEntity);
+    ActionResult cancel(LivingEntity livingEntity);
 }

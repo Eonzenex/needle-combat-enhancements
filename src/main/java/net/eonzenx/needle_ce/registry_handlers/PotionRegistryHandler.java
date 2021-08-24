@@ -44,15 +44,15 @@ public class PotionRegistryHandler
 
     static {
         STUN = new Potion(new StatusEffectInstance(StatusEffectRegistryHandler.STUN, 40));
-        LONG_STUN = new Potion(new StatusEffectInstance(StatusEffectRegistryHandler.STUN, 60));
-        LONGER_STUN = new Potion(new StatusEffectInstance(StatusEffectRegistryHandler.STUN, 80));
+        LONG_STUN = new Potion("stun", new StatusEffectInstance(StatusEffectRegistryHandler.STUN, 60));
+        LONGER_STUN = new Potion("stun", new StatusEffectInstance(StatusEffectRegistryHandler.STUN, 80));
 
         STUN_RESISTANCE = new Potion(new StatusEffectInstance(StatusEffectRegistryHandler.STUN_RESISTANCE, 2400));
-        LONG_STUN_RESISTANCE = new Potion(new StatusEffectInstance(StatusEffectRegistryHandler.STUN_RESISTANCE, 4800));
-        LONGER_STUN_RESISTANCE = new Potion(new StatusEffectInstance(StatusEffectRegistryHandler.STUN_RESISTANCE, 7200));
+        LONG_STUN_RESISTANCE = new Potion("stun_resistance", new StatusEffectInstance(StatusEffectRegistryHandler.STUN_RESISTANCE, 4800));
+        LONGER_STUN_RESISTANCE = new Potion("stun_resistance", new StatusEffectInstance(StatusEffectRegistryHandler.STUN_RESISTANCE, 7200));
 
         STUN_IMMUNITY = new Potion(new StatusEffectInstance(StatusEffectRegistryHandler.STUN_IMMUNITY, 1200));
-        LONG_STUN_IMMUNITY = new Potion(new StatusEffectInstance(StatusEffectRegistryHandler.STUN_IMMUNITY, 2400));
-        LONGER_STUN_IMMUNITY = new Potion(new StatusEffectInstance(StatusEffectRegistryHandler.STUN_RESISTANCE, 3600));
+        LONG_STUN_IMMUNITY = new Potion("stun_immunity", new StatusEffectInstance(StatusEffectRegistryHandler.STUN_IMMUNITY, 2400));
+        LONGER_STUN_IMMUNITY = new Potion("stun_immunity", new StatusEffectInstance(StatusEffectRegistryHandler.STUN_RESISTANCE, 3600));
     }
 }

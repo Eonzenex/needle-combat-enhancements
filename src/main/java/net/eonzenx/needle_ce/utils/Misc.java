@@ -13,12 +13,12 @@ public class Misc {
         return min + (float) Math.random() * (max - min);
     }
 
-    public static Vec3d GetPlayerForward(PlayerEntity player) {
-        return Vec3d.fromPolar(0, player.getYaw());
+    public static Vec3d GetPlayerForward(LivingEntity livingEntity) {
+        return Vec3d.fromPolar(0, livingEntity.getYaw());
     }
 
-    public static List<Integer> GetLivingEntityIds(PlayerEntity player, Box hitbox) {
-        var entities = player.getEntityWorld().getOtherEntities(player, hitbox);
+    public static List<Integer> GetLivingEntityIds(LivingEntity livingEntity, Box hitbox) {
+        var entities = livingEntity.getEntityWorld().getOtherEntities(livingEntity, hitbox);
         var livingEntityIds = new ArrayList<Integer>();
         for (var entity: entities) {
             if (entity instanceof LivingEntity lEntity)
