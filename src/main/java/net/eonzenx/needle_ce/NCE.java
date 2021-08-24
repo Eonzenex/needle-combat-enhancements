@@ -22,7 +22,5 @@ public class NCE implements ModInitializer
 		PotionRegistryHandler.init();
 	}
 
-	public static Identifier newId(String id) {
-		return new Identifier(MOD_ID, id);
-	}
+	public static Identifier newId(String id) { return new Identifier(MOD_ID, id); }
 }

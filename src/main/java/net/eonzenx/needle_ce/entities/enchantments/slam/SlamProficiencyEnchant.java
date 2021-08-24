@@ -1,9 +1,13 @@
 package net.eonzenx.needle_ce.entities.enchantments.slam;
 
+import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SlamProficiencyEnchant extends Enchantment {
 
@@ -25,7 +29,16 @@ public class SlamProficiencyEnchant extends Enchantment {
     public int getMaxLevel() { return 5; }
 
     @Override
-    protected boolean canAccept(Enchantment other) { return super.canAccept(other); }
+    protected boolean canAccept(Enchantment other) {
+        var blocked = new ArrayList<>(Arrays.asList(
+                EnchantmentRegistryHandler.DASH_PROFICIENCY,
+                EnchantmentRegistryHandler.BASH_PROFICIENCY,
+                EnchantmentRegistryHandler.STAMINA_RECOVERY,
+                this
+        ));
+
+        return !blocked.contains(other);
+    }
 
     @Override
     public boolean isAvailableForEnchantedBookOffer() { return true; }
