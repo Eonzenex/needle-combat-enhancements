@@ -3,13 +3,13 @@
   "id": "needle_ce",
   "version": "${version}",
 
-  "name": "Needle Combat Enhancements",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Needle - Combat Enhancements",
+  "description": "Needle - Combat Enhancements aims to add new depth to the combat of Minecraft without overloading the user with new and unnecessary content.",
   "authors": [
     "EonZeNx"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
+    "homepage": "https://github.com/Eonzenex/needle-combat-enhancements",
     "sources": "https://github.com/FabricMC/fabric-example-mod"
   },
 

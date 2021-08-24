@@ -13,7 +13,6 @@
     "entities.NCEPlayerMixin"
   ],
   "client": [
-    "NCEMixin"
   ],
   "injectors": {
     "defaultRequire": 1
