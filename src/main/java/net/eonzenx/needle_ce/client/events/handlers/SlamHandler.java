@@ -31,7 +31,7 @@ public class SlamHandler
 {
     public static float CalcSlamCost(LivingEntity livingEntity) {
         // Calculate bash stamina cost
-        float slamCost = StaminaConfig.Slam.COST;
+        var slamCost = StaminaConfig.Slam.COST;
         int slamProfEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.SLAM_PROFICIENCY, livingEntity);
         if (slamProfEnchantLvl > 0) {
             slamCost = slamCost - (slamProfEnchantLvl * 0.4f);
@@ -39,6 +39,7 @@ public class SlamHandler
 
         return slamCost;
     }
+
 
     public static boolean CanPerformSlam(LivingEntity livingEntity, IFullStamina stamina) {
         float bashCost = CalcSlamCost(livingEntity);
@@ -87,20 +88,31 @@ public class SlamHandler
     }
 
 
+    public static float CalcHitboxScale(LivingEntity livingEntity) {
+        var scale = 1f;
+        int scaleEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.SHOCKWAVE, livingEntity);
+        if (scaleEnchantLvl > 0) {
+            scale += scaleEnchantLvl * 0.2f;
+        }
+
+        return scale;
+    }
 
     public static Box CalcHitbox(LivingEntity livingEntity) {
         var playerForward = Misc.GetPlayerForward(livingEntity);
         var playerUp = new Vec3d(0, 1, 0);
-        var playerRight = playerForward.crossProduct(playerUp);
+//        var playerRight = playerForward.crossProduct(playerUp);
+
         var pos = livingEntity.getPos();
+        var scale = CalcHitboxScale(livingEntity);
 
         var boxLowerLeft = pos;
         boxLowerLeft = boxLowerLeft
-                .add(StaminaConfig.Slam.Hitbox.WIDTH, StaminaConfig.Slam.Hitbox.HEIGHT, StaminaConfig.Slam.Hitbox.WIDTH);
+                .add(StaminaConfig.Slam.Hitbox.WIDTH * scale, StaminaConfig.Slam.Hitbox.HEIGHT, StaminaConfig.Slam.Hitbox.WIDTH * scale);
 
         var boxUpperRight = pos;
         boxUpperRight = boxUpperRight
-                .add(-StaminaConfig.Slam.Hitbox.WIDTH, -StaminaConfig.Slam.Hitbox.HEIGHT, -StaminaConfig.Slam.Hitbox.WIDTH);
+                .add(StaminaConfig.Slam.Hitbox.WIDTH * -scale, -StaminaConfig.Slam.Hitbox.HEIGHT, StaminaConfig.Slam.Hitbox.WIDTH * -scale);
 
         return new Box(boxLowerLeft, boxUpperRight);
     }

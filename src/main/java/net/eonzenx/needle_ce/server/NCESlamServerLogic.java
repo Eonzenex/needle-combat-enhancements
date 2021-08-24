@@ -2,8 +2,10 @@ package net.eonzenx.needle_ce.server;
 
 import net.eonzenx.needle_ce.cardinal_components.StaminaConfig;
 import net.eonzenx.needle_ce.cardinal_components.stamina.IFullStamina;
+import net.eonzenx.needle_ce.client.events.handlers.SlamHandler;
 import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
 import net.eonzenx.needle_ce.registry_handlers.StatusEffectRegistryHandler;
+import net.eonzenx.needle_ce.utils.Misc;
 import net.eonzenx.needle_ce.utils.mixin.IGetTicksPerSec;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -12,7 +14,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
@@ -26,7 +27,7 @@ public class NCESlamServerLogic
         float slamForce = StaminaConfig.Slam.Impact.FORCE;
         int slamForceEnchantLvl = EnchantmentHelper.getEquipmentLevel(EnchantmentRegistryHandler.HEAVY_WEIGHT, player);
         if (slamForceEnchantLvl > 0) {
-            slamForce += (slamForceEnchantLvl * 0.4f);
+            slamForce += (slamForceEnchantLvl * 0.5f);
         }
 
         return slamForce;
@@ -60,10 +61,6 @@ public class NCESlamServerLogic
     }
 
 
-    private static double RandBetween() {
-        return (Math.random() - 0.5);
-    }
-
     private static void SpawnImpactParticles(PlayerEntity player, ParticleEffect type, int count) {
         var pos = player.getPos();
 
@@ -87,7 +84,8 @@ public class NCESlamServerLogic
         var playerWorld = server.getWorld(playerWorldKey);
         if (playerWorld == null) return;
 
-        var livingEntityIds = buf.readIntArray();
+        var hitBox = SlamHandler.CalcHitbox(player);
+        var livingEntityIds = Misc.GetLivingEntityIds(player, hitBox);
         var playerPos = player.getPos();
 
         var bashKnockbackForce = CalcKnockbackForce(player);
@@ -98,7 +96,7 @@ public class NCESlamServerLogic
                 var entityPos = livingEntity.getPos();
 
                 var distance = playerPos.distanceTo(entityPos);
-                if (distance > StaminaConfig.Slam.Hitbox.MAX_DISTANCE) continue;
+                if (distance > StaminaConfig.Slam.Hitbox.MAX_DISTANCE * SlamHandler.CalcHitboxScale(player)) continue;
 
                 var knockbackDirection = entityPos
                         .add(playerPos.multiply(-1));

@@ -1,6 +1,5 @@
 package net.eonzenx.needle_ce.entities.enchantments.bash;
 
-import net.eonzenx.needle_ce.registry_handlers.EnchantmentRegistryHandler;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.entity.EquipmentSlot;
