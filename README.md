@@ -37,7 +37,7 @@ All effects are available as potions (WIP)
 * Axes deal extra damage to shield (WIP)
 
 ## License
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+GPLv3.0
 
 
 ## References
